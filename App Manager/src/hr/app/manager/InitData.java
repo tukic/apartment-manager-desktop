@@ -82,12 +82,35 @@ public class InitData implements Runnable {
 				System.out.println("checkOutDate = " + checkOutDate);
 				int pricePerNight = rset.getInt("pricePerNight");
 				System.out.println("pricePerNight = " + pricePerNight);
+				int totalPrice = rset.getInt("totalPrice");
+				System.out.println("totalPrice = " + totalPrice);
+				int advancedPayment = rset.getInt("advancedPayment");
+				System.out.println("advancedPayment =" + advancedPayment);
 				int touristsId = rset.getInt("touristsId");
 				System.out.println("touristsId = " + touristsId);
 				String touristsName = rset.getString("name");
 				System.out.println("touristsName = " + touristsName);
 				String reservationStatusStr = rset.getString("confirmed");
 				System.out.println("confirmed = " + reservationStatusStr);
+				int numberOfAdults = rset.getInt("numberOfAdults");
+				System.out.println("numberOfAdults=" + numberOfAdults);
+				int numberOfChildren = rset.getInt("numberOfChildren");
+				System.out.println("numberOfChildren" + numberOfChildren);
+				int numberOfPersons = rset.getInt("numberOfPersons");
+				System.out.println("numberOfPersons" + numberOfPersons);
+				String country = rset.getString("country");
+				System.out.println("country = " + country);
+				String city = rset.getString("city");
+				System.out.println("city = " + city);
+				String email = rset.getString("email");
+				System.out.println("email = " + email);
+				String phoneNumber = rset.getString("phoneNumber");
+				System.out.println("phoneNumber = " + phoneNumber);
+				boolean pets = rset.getBoolean("pets");
+				System.out.println("pets = " + pets);
+				String touristsNote = rset.getString("touristsNote");
+				System.out.println("touristsNote = " + touristsNote);
+				
 				
 				ReservationStatus status = ReservationStatus.RESERVATION;
 				
@@ -119,11 +142,16 @@ public class InitData implements Runnable {
 				if (!manager.getApartmentList().contains(new Apartment(apartmentId, apartmentName))) {
 					manager.addToApartmentList(new Apartment(apartmentId, apartmentName));
 				}	
-				Reservation reservation = new Reservation(reservationId, checkInDate, checkOutDate, pricePerNight, status);
 				
-				if(touristsName != null) {
-					reservation.setTourists(new Tourists(touristsId, touristsName));
-				}
+				Tourists tourists = new Tourists(touristsId, touristsName, country, city, numberOfAdults,
+						numberOfChildren, numberOfPersons, email, phoneNumber, pets, touristsNote);
+						
+				Reservation reservation = new Reservation(reservationId, checkInDate,
+						checkOutDate, pricePerNight, totalPrice, advancedPayment, status, tourists);
+				
+				//if(touristsName != null) {
+					//reservation.setTourists(new Tourists(touristsId, touristsName));
+				//}
 				
 				manager.getApartmentById(apartmentId).addToReservationList(reservation);
 				System.out.println("apartmentName = " + manager.getApartmentById(apartmentId).getName());

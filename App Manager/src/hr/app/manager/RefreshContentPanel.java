@@ -72,7 +72,7 @@ public class RefreshContentPanel {
 
 				LocalDate date = LocalDate.of(manager.getYear(), month, i);
 				String status = "slobodno";
-				Reservation reservation = new Reservation(-1, date, date, 0, ReservationStatus.CANCELLED);
+				Reservation reservation = new Reservation(-1, date, date, 0, 0, 0, ReservationStatus.CANCELLED, null);
 				if (apartment.getReservedDatesMap().get(date) != null) {
 					reservation = apartment.getReservedDatesMap().get(date);
 					status = apartment.getReservedDatesMap().get(date).getStatus().toString();
@@ -97,11 +97,28 @@ public class RefreshContentPanel {
 				JButton touristsNameBtn = new JButton(tourists.getName());
 				touristsNameBtn.setEnabled(enabled);
 				touristsNameBtn.setBackground(color);
-				LocalDate checkInDate = reservation.getCheckInDate();
-				LocalDate checkOutDate = reservation.getCheckOutDate();
-				touristsNameBtn.addActionListener(l -> {
-					new ReservationFrame(manager, tourists.getName(), checkInDate, checkOutDate);
-				});
+				if (enabled == true) {
+					LocalDate checkInDate = reservation.getCheckInDate();
+					LocalDate checkOutDate = reservation.getCheckOutDate();
+					String pricePerNight = Integer.toString(reservation.getPricePerNight());
+					String totalPrice = Integer.toString(reservation.getTotalPrice());
+					String numberOfPersons = Integer.toString(reservation.getTourists().getNumberOfPersons());
+					String numberOfAdults = Integer.toString(reservation.getTourists().getNumberOfAdults());
+					String numberOfChildren = Integer.toString(reservation.getTourists().getNumberOfChildren());
+					String city = reservation.getTourists().getCity();
+					String country = reservation.getTourists().getCountry();
+					String email = reservation.getTourists().getEmail();
+					String phoneNumber = reservation.getTourists().getPhoneNumber();
+					boolean pets = reservation.getTourists().isPets();
+					boolean advancePaid = reservation.getStatus().equals(ReservationStatus.ADVANCE_PAID);
+					String advancedPayment = Integer.toString(reservation.getAdvancedPayment());
+					String touristsNote = reservation.getTourists().getTouristsNote();
+					touristsNameBtn.addActionListener(l -> {
+						new ReservationFrame(manager, tourists.getName(), checkInDate, checkOutDate, pricePerNight,
+								totalPrice, numberOfPersons, numberOfAdults, numberOfChildren, city, country, email,
+								phoneNumber, pets, advancePaid, advancedPayment, touristsNote, apartment.getName());
+					});
+				}
 				calendarPanel.add(touristsNameBtn);
 				//calendarPanel.add(new JLabel(status));
 			}

@@ -16,6 +16,23 @@ public class Tourists {
 	
 	
 	
+	public Tourists(int id, String name, String country,
+			String city, int numberOfAdults, int numberOfChildren,
+			int numberOfPersons, String email, String phoneNumber,
+			boolean pets, String touristsNote) {
+		this.id = id;
+		this.name = name;
+		this.country = country;
+		this.city = city;
+		this.numberOfAdults = numberOfAdults;
+		this.numberOfChildren = numberOfChildren;
+		this.numberOfPersons = numberOfPersons;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.pets = pets;
+		this.touristsNote = touristsNote;
+	}
+
 	public Tourists(int id, String name) {
 		super();
 		this.id = id;

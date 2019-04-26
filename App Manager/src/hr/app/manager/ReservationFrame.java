@@ -74,12 +74,36 @@ public class ReservationFrame {
 	}
 	
 	
-	public ReservationFrame(Manager manager, String name, LocalDate checkInDate, LocalDate checkOutDate) {
+	public ReservationFrame(Manager manager, String name, LocalDate checkInDate, LocalDate checkOutDate, 
+			String pricePerNight, String totalPrice, String numberOfPersons, String numberOfAdults,
+			String numberOfChildren, String city, String country, String email, String phoneNumber,
+			boolean animals, boolean advancePaid, String advancedPayment, String notes, String apartmentName) {
 		this.manager = manager;
 		initialize();
 		guestNameTxtFld.setText(name);
 		checkInDatePicker.setDate(checkInDate);
 		checkOutDatePicker.setDate(checkOutDate);
+		pricePerNightTxtFld.setText(pricePerNight);
+		totalPriceTxtFld.setText(totalPrice);
+		numberOfAdultsTxtFld.setText(numberOfAdults);
+		numberOfChildrenTxtFld.setText(numberOfChildren);
+		numberOfPersonsTxtFld.setText(numberOfPersons);
+		cityTxtFld.setText(city);
+		countryTxtFld.setText(country);
+		emailTxtFld.setText(email);
+		phoneNumberTxtFld.setText(phoneNumber);
+		animalsCheckBox.setSelected(animals);
+		advancedPaymentCheckBox.setSelected(advancePaid);
+		advancedPaymentTxtFld.setText(advancedPayment);
+		notesTxtArea.setText(notes);
+		
+		int i = 0;
+		for(i = 0; i < manager.apartmentsToStringArray().length; i++) {
+			if (apartmentName.equals(manager.apartmentsToStringArray()[i])) {
+				break;
+			}
+		}
+		apartmentComboBox.setSelectedIndex(i);
 		frame.setVisible(true);
 	}
 
