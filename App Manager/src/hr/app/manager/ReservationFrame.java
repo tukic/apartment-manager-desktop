@@ -22,6 +22,10 @@ import com.github.lgooddatepicker.components.DatePicker;
 
 public class ReservationFrame {
 
+	int reservationId;
+	int touristsId;
+	private boolean update;
+	private boolean save;
 	private Manager manager;
 	private JFrame frame;
 	private JTextField guestNameTxtFld;
@@ -74,11 +78,14 @@ public class ReservationFrame {
 	}
 	
 	
-	public ReservationFrame(Manager manager, String name, LocalDate checkInDate, LocalDate checkOutDate, 
-			String pricePerNight, String totalPrice, String numberOfPersons, String numberOfAdults,
+	public ReservationFrame(Manager manager, int reservationId, String name, LocalDate checkInDate, LocalDate checkOutDate, 
+			String pricePerNight, String totalPrice, int touristsId, String numberOfPersons, String numberOfAdults,
 			String numberOfChildren, String city, String country, String email, String phoneNumber,
 			boolean animals, boolean advancePaid, String advancedPayment, String notes, String apartmentName) {
 		this.manager = manager;
+		this.reservationId = reservationId;
+		this.touristsId = touristsId;
+		update = true;
 		initialize();
 		guestNameTxtFld.setText(name);
 		checkInDatePicker.setDate(checkInDate);
@@ -96,7 +103,6 @@ public class ReservationFrame {
 		advancedPaymentCheckBox.setSelected(advancePaid);
 		advancedPaymentTxtFld.setText(advancedPayment);
 		notesTxtArea.setText(notes);
-		
 		int i = 0;
 		for(i = 0; i < manager.apartmentsToStringArray().length; i++) {
 			if (apartmentName.equals(manager.apartmentsToStringArray()[i])) {
@@ -231,12 +237,23 @@ public class ReservationFrame {
 		bottomPanel.add(notesLbl, BorderLayout.PAGE_START);
 		bottomPanel.add(scrollPane, BorderLayout.CENTER);
 		
-		saveBtn = new JButton("Spremi");
-		saveBtn.addActionListener(l -> {
-			saveBtn.setEnabled(false);
-			Thread saveReservationThr = new Thread(new SaveReservation(this, manager));
-			saveReservationThr.start();
-		});
+		if(!update) {
+			saveBtn = new JButton("Spremi");
+			saveBtn.addActionListener(l -> {
+				saveBtn.setEnabled(false);
+				Thread saveReservationThr = new Thread(new SaveReservation(this, manager));
+				saveReservationThr.start();
+			});
+		} else {
+			saveBtn = new JButton("Spremi izmjene");
+			saveBtn.addActionListener(l -> {
+				saveBtn.setEnabled(false);
+				Thread saveReservationThr = new Thread(new UpdateReservation(this, manager, reservationId, touristsId));
+				saveReservationThr.start();
+			});
+		}
+		
+		
 		bottomPanel.add(saveBtn, BorderLayout.PAGE_END);
 		
 		container.add(contentPanel, BorderLayout.CENTER);

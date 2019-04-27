@@ -98,10 +98,12 @@ public class RefreshContentPanel {
 				touristsNameBtn.setEnabled(enabled);
 				touristsNameBtn.setBackground(color);
 				if (enabled == true) {
+					int reservationId = reservation.getId();
 					LocalDate checkInDate = reservation.getCheckInDate();
 					LocalDate checkOutDate = reservation.getCheckOutDate();
 					String pricePerNight = Integer.toString(reservation.getPricePerNight());
 					String totalPrice = Integer.toString(reservation.getTotalPrice());
+					int touristsId = tourists.getId();
 					String numberOfPersons = Integer.toString(reservation.getTourists().getNumberOfPersons());
 					String numberOfAdults = Integer.toString(reservation.getTourists().getNumberOfAdults());
 					String numberOfChildren = Integer.toString(reservation.getTourists().getNumberOfChildren());
@@ -114,8 +116,8 @@ public class RefreshContentPanel {
 					String advancedPayment = Integer.toString(reservation.getAdvancedPayment());
 					String touristsNote = reservation.getTourists().getTouristsNote();
 					touristsNameBtn.addActionListener(l -> {
-						new ReservationFrame(manager, tourists.getName(), checkInDate, checkOutDate, pricePerNight,
-								totalPrice, numberOfPersons, numberOfAdults, numberOfChildren, city, country, email,
+						new ReservationFrame(manager, reservationId, tourists.getName(), checkInDate, checkOutDate, pricePerNight,
+								totalPrice, touristsId, numberOfPersons, numberOfAdults, numberOfChildren, city, country, email,
 								phoneNumber, pets, advancePaid, advancedPayment, touristsNote, apartment.getName());
 					});
 				}
