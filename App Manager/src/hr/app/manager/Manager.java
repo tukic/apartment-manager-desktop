@@ -1,8 +1,8 @@
 package hr.app.manager;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,6 +57,9 @@ public class Manager {
 	 * Create the application.
 	 */
 	public Manager() {
+		
+		String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
+		
 		initDataThr = new Thread(new InitData(this));
 		initDataThr.start();
 		initialize();
@@ -144,11 +147,13 @@ public class Manager {
 		frame.add(centralPanel);
 		//new LoadingScreen(this).show();
 		
+		
 		try {
 			initDataThr.join();				//waiting initDataThr to finish so data could be taken in time
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
 		new RefreshContentPanel(this).refresh();
 				
 	}
@@ -192,6 +197,7 @@ public class Manager {
 	public void setContentPanel(JPanel contentPanel) {
 		this.contentPanel = contentPanel;
 	}
+	
 	
 	public Apartment getApartmentFromList(Apartment apartment) {
 		Apartment found = null;
