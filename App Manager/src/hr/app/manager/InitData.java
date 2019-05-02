@@ -1,14 +1,9 @@
 package hr.app.manager;
 
-import java.awt.EventQueue;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.Date;
-
-import javax.swing.SwingUtilities;
 
 import hr.app.enumerations.ReservationStatus;
 import hr.app.model.Apartment;
@@ -37,18 +32,11 @@ public class InitData implements Runnable {
 	public void run() {
 		Connection conn = null;
 		try {
-			String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(url, "johto_db", "antejoni2007");
-			System.out.println("Database connection established");
 			
-			
-
+			conn =  C3poDataSource.getConnection();
 			Statement stmt = conn.createStatement();
+ 
 			
-			/* 
-			 * 
-			 */
 			
 			String selectApartment = "select * from apartment";
 			ResultSet apartmentsRset = stmt.executeQuery(selectApartment);
@@ -163,6 +151,7 @@ public class InitData implements Runnable {
 				++rowCount;
 			}
 			System.out.println("Total number of records = " + rowCount);
+			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

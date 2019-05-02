@@ -73,6 +73,7 @@ public class ReservationFrame {
 	 */
 	public ReservationFrame(Manager manager) {
 		this.manager = manager;
+		update = false;
 		initialize();
 		frame.setVisible(true);
 	}
