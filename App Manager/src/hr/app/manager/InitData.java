@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 
+import javax.swing.SwingUtilities;
+
 import hr.app.enumerations.ReservationStatus;
 import hr.app.model.Apartment;
 import hr.app.model.Reservation;
@@ -156,11 +158,11 @@ public class InitData implements Runnable {
 			e.printStackTrace();
 		}
 		
-		/*SwingUtilities.invokeLater(()-> {
+		SwingUtilities.invokeLater(()-> {
 			new RefreshContentPanel(manager).refresh();
-			manager.getFrame().setVisible(false);
-			manager.getFrame().setVisible(true);
-		});*/
+			//manager.getFrame().setVisible(false);
+			//manager.getFrame().setVisible(true);
+		});
 	}
 
 }
