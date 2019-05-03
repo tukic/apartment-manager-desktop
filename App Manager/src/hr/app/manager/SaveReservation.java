@@ -44,9 +44,9 @@ public class SaveReservation implements Runnable {
 			
 			//String apartmentId = manager.getApartmentById()
 			
-			String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(url, "johto_db", "antejoni2007");
+			//String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
+			//Class.forName("com.mysql.jdbc.Driver");
+			conn = C3poDataSource.getConnection();
 			System.out.println("Database connection established");
 			
 			
@@ -158,6 +158,7 @@ public class SaveReservation implements Runnable {
 			System.out.println("Total number of records = " + rowCount);*/
 			manager.removeAllData();
 			
+			conn.close();
 			Thread initDataThr = new Thread(new InitData(manager));
 			initDataThr.start();
 			initDataThr.join();

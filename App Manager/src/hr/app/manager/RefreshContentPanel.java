@@ -29,6 +29,9 @@ public class RefreshContentPanel {
 		manager.getMonthCmbBox().setPopupVisible(false);
 		JPanel contentPanel = manager.getContentPanel();
 		contentPanel.removeAll();
+		
+		manager.getTopPanel().add(manager.getNewReservationBtn());
+		manager.getCentralPanel().add(manager.getMonthCmbBox(), BorderLayout.PAGE_START);
 
 		String monthString = (String) manager.getMonthCmbBox().getSelectedItem();
 		int month = 7;

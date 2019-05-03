@@ -35,6 +35,8 @@ public class Manager {
 	private JComboBox<String> monthCmbBox;
 	private JPanel contentPanel;
 	private JPanel centralPanel;
+	private JPanel topPanel;
+	private JButton newReservationBtn;
 
 	/**
 	 * Launch the application.
@@ -74,29 +76,23 @@ public class Manager {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
-		JPanel topPanel = new JPanel();
+		topPanel = new JPanel();
 		frame.getContentPane().add(topPanel, BorderLayout.NORTH);
 		topPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		
-		JButton newReservationBtn = new JButton("Nova rezervacija");
+		newReservationBtn = new JButton("Nova rezervacija");
 		newReservationBtn.addActionListener(new ReservationClicked(this));
-		topPanel.add(newReservationBtn);		
+		//topPanel.add(newReservationBtn);		
 
 		centralPanel = new JPanel();
 		frame.getContentPane().add(centralPanel, BorderLayout.CENTER);
-		
-		/*try {
-			initDataThr.join();				//waiting initDataThr to finish so data could be taken in time
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
 		
 		centralPanel.setLayout(new BorderLayout());
 		contentPanel = new JPanel();
 		monthCmbBox = new JComboBox<>(monthComboBoxArray);
 		monthCmbBox.addActionListener(new MonthCmbBoxChanged(this));
 		
-		centralPanel.add(monthCmbBox, BorderLayout.PAGE_START);
+
 		System.out.println();
 		
 		/*
@@ -145,16 +141,16 @@ public class Manager {
 		
 		centralPanel.add(new JScrollPane(contentPanel), BorderLayout.CENTER);
 		frame.add(centralPanel);
-		//new LoadingScreen(this).show();
+		new LoadingScreen(this).show();
 		
 		
-		try {
+		/*try {
 			initDataThr.join();				//waiting initDataThr to finish so data could be taken in time
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 
-		new RefreshContentPanel(this).refresh();
+		//new RefreshContentPanel(this).refresh();
 				
 	}
 
@@ -196,6 +192,14 @@ public class Manager {
 	
 	public void setContentPanel(JPanel contentPanel) {
 		this.contentPanel = contentPanel;
+	}
+	
+	public JButton getNewReservationBtn() {
+		return newReservationBtn;
+	}
+	
+	public JPanel getTopPanel() {
+		return topPanel;
 	}
 	
 	
