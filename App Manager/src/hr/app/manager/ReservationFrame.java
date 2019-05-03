@@ -1,15 +1,19 @@
 package hr.app.manager;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Currency;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,12 +33,12 @@ public class ReservationFrame {
 	private Manager manager;
 	private JFrame frame;
 	private JTextField guestNameTxtFld;
-	private JTextField pricePerNightTxtFld;
-	private JTextField advancedPaymentTxtFld;
+	private JFormattedTextField pricePerNightTxtFld;
+	private JFormattedTextField advancedPaymentTxtFld;
 	private DatePicker checkInDatePicker;
 	private DatePicker checkOutDatePicker;
 	private JButton saveBtn;
-	private JTextField totalPriceTxtFld;
+	private JFormattedTextField totalPriceTxtFld;
 	private JTextField numberOfChildrenTxtFld;
 	private JTextField numberOfAdultsTxtFld;
 	private JTextField numberOfPersonsTxtFld;
@@ -46,6 +50,7 @@ public class ReservationFrame {
 	private JCheckBox animalsCheckBox;
 	private JCheckBox advancedPaymentCheckBox;
 	private JTextArea notesTxtArea;
+	private DecimalFormat paymentFormat;
 
 	/**
 	 * Launch the application.
@@ -80,9 +85,9 @@ public class ReservationFrame {
 	
 	
 	public ReservationFrame(Manager manager, int reservationId, String name, LocalDate checkInDate, LocalDate checkOutDate, 
-			String pricePerNight, String totalPrice, int touristsId, String numberOfPersons, String numberOfAdults,
+			double pricePerNight, double totalPrice, int touristsId, String numberOfPersons, String numberOfAdults,
 			String numberOfChildren, String city, String country, String email, String phoneNumber,
-			boolean animals, boolean advancePaid, String advancedPayment, String notes, String apartmentName) {
+			boolean animals, boolean advancePaid, double advancedPayment, String notes, String apartmentName) {
 		this.manager = manager;
 		this.reservationId = reservationId;
 		this.touristsId = touristsId;
@@ -91,8 +96,8 @@ public class ReservationFrame {
 		guestNameTxtFld.setText(name);
 		checkInDatePicker.setDate(checkInDate);
 		checkOutDatePicker.setDate(checkOutDate);
-		pricePerNightTxtFld.setText(pricePerNight);
-		totalPriceTxtFld.setText(totalPrice);
+		pricePerNightTxtFld.setText(paymentFormat.format(pricePerNight));
+		totalPriceTxtFld.setText(paymentFormat.format(totalPrice));
 		numberOfAdultsTxtFld.setText(numberOfAdults);
 		numberOfChildrenTxtFld.setText(numberOfChildren);
 		numberOfPersonsTxtFld.setText(numberOfPersons);
@@ -102,7 +107,7 @@ public class ReservationFrame {
 		phoneNumberTxtFld.setText(phoneNumber);
 		animalsCheckBox.setSelected(animals);
 		advancedPaymentCheckBox.setSelected(advancePaid);
-		advancedPaymentTxtFld.setText(advancedPayment);
+		advancedPaymentTxtFld.setText(paymentFormat.format(advancedPayment));
 		notesTxtArea.setText(notes);
 		int i = 0;
 		for(i = 0; i < manager.apartmentsToStringArray().length; i++) {
@@ -124,6 +129,16 @@ public class ReservationFrame {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		//SpringLayout springLayout = new SpringLayout();
 		//frame.getContentPane().setLayout(springLayout);
+		
+		//formated to eur currency without symbol
+		paymentFormat = (DecimalFormat) NumberFormat.getCurrencyInstance();
+		paymentFormat.setCurrency(Currency.getInstance("EUR"));
+		String pattern = paymentFormat.toPattern();
+		String newPattern = pattern.replace("\u00A4", "").trim();
+		//delete trailing space
+		newPattern = newPattern.substring(0, newPattern.length()-1);
+		System.out.println(newPattern);
+		paymentFormat = new DecimalFormat(newPattern);
 		
 		JPanel container = new JPanel(new BorderLayout());
 		JPanel contentPanel = new JPanel(new GridLayout(0, 4, 10, 5));
@@ -164,7 +179,7 @@ public class ReservationFrame {
 		
 		JLabel pricePerNightLbl = new JLabel("Cijena po no\u0107i");
 		contentPanel.add(pricePerNightLbl);
-		pricePerNightTxtFld = new JTextField();
+		pricePerNightTxtFld = new JFormattedTextField(paymentFormat);
 		contentPanel.add(pricePerNightTxtFld);
 		pricePerNightTxtFld.setColumns(10);
 		
@@ -187,7 +202,7 @@ public class ReservationFrame {
 		
 		JLabel advancedPaymentLbl = new JLabel("Iznos akontacije");
 		contentPanel.add(advancedPaymentLbl);
-		advancedPaymentTxtFld = new JTextField();
+		advancedPaymentTxtFld = new JFormattedTextField(paymentFormat);
 		advancedPaymentTxtFld.setColumns(10);
 		contentPanel.add(advancedPaymentTxtFld);
 		
@@ -200,7 +215,13 @@ public class ReservationFrame {
 		JLabel totalPriceLbl = new JLabel("Ukupna cijena");
 		contentPanel.add(totalPriceLbl);
 		
-		totalPriceTxtFld = new JTextField();
+		totalPriceTxtFld = new JFormattedTextField(paymentFormat);
+		
+		/*DecimalFormatSymbols symbols = paymentFormat.getDecimalFormatSymbols();
+		symbols.setCurrencySymbol(""); // Don't use null.
+		paymentFormat.setDecimalFormatSymbols(symbols);*/
+		//totalPriceTxtFld = new JFormattedTextField(paymentFormat);
+		
 		totalPriceTxtFld.setColumns(10);
 		contentPanel.add(totalPriceTxtFld);
 		
@@ -529,5 +550,9 @@ public class ReservationFrame {
 
 	public JButton getSaveBtn() {
 		return saveBtn;
+	}
+	
+	public DecimalFormat getPaymentFormat() {
+		return paymentFormat;
 	}
 }

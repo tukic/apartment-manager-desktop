@@ -14,19 +14,19 @@ public class Reservation {
 	private Tourists tourists;
 	private LocalDate checkInDate;
 	private LocalDate checkOutDate;
-	private int pricePerNight;
-	private int totalPrice;
+	private double pricePerNight;
+	private double totalPrice;
 	private ReservationStatus status;
-	private int advancedPayment;
+	private double advancedPayment;
 
 	public Reservation(int id, LocalDate checkInDate, LocalDate checkOutDate,
-			int pricePerNight, int totalPrice, int advancedPayment,
+			double pricePerNight, double totalPrice, double advancedPayment,
 			ReservationStatus status, Tourists tourists) {
 		this.id = id;
 		this.checkInDate = checkInDate;
 		this.checkOutDate = checkOutDate;
 		this.pricePerNight = pricePerNight;
-		this.totalPrice = pricePerNight;//* Math.toIntExact(ChronoUnit.DAYS.between(checkOutDate, checkInDate));
+		this.totalPrice = totalPrice;//* Math.toIntExact(ChronoUnit.DAYS.between(checkOutDate, checkInDate));
 		this.advancedPayment = advancedPayment;
 		this.status = status;
 		this.tourists = tourists;
@@ -52,15 +52,15 @@ public class Reservation {
 		return checkOutDate;
 	}
 
-	public int getPricePerNight() {
+	public double getPricePerNight() {
 		return pricePerNight;
 	}
 
-	public int getTotalPrice() {
+	public double getTotalPrice() {
 		return totalPrice;
 	}
 
-	public int getAdvancedPayment() {
+	public double getAdvancedPayment() {
 		return advancedPayment;
 	}
 

@@ -1,10 +1,12 @@
 package hr.app.manager;
 
-import java.awt.event.ActionEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Currency;
 
 import javax.swing.SwingUtilities;
 
@@ -29,12 +31,20 @@ public class UpdateReservation implements Runnable {
 		Connection conn = null;
 		try {
 			
+			//formated to eur currency without symbol
+			DecimalFormat paymentFormat = reservationFrame.getPaymentFormat();
+			String pattern = paymentFormat.toPattern();
+			String newPattern = pattern.replace("\u00A4", "").trim();
+			//delete trailing space
+			newPattern = newPattern.substring(0, newPattern.length()-1);
+			paymentFormat = new DecimalFormat(newPattern);
+			
 			String nameStr = Util.prepareString(reservationFrame.getGuestNameTxtFld().getText());
 			String checkInDateStr = Util.prepareString(reservationFrame.getCheckInDatePicker().getDateStringOrEmptyString());
 			String checkOutDateStr = Util.prepareString(reservationFrame.getCheckOutDatePicker().getDateStringOrEmptyString());
-			String pricePerNightStr = Util.prepareString(reservationFrame.getPricePerNightTxtFld().getText());
-			String totalPriceStr = Util.prepareString(reservationFrame.getTotalPriceTxtFld().getText());
-			String advancedPaymentStr = Util.prepareString(reservationFrame.getAdvancedPaymentTxtFld().getText());
+			String pricePerNightStr = Util.prepareString(paymentFormat.parse(reservationFrame.getPricePerNightTxtFld().getText()).toString());
+			String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
+			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
 			String apartmentNameStr = Util.prepareString(reservationFrame.getApartmentComboBox().getSelectedItem().toString());
 			String numberOfAdultsStr = Util.prepareString(reservationFrame.getNumberOfAdultsTxtFld().getText());
 			String numberOfChildrenStr = Util.prepareString(reservationFrame.getNumberOfChildrenTxtFld().getText());
@@ -48,22 +58,13 @@ public class UpdateReservation implements Runnable {
 			String touristsIdStr = Util.prepareString(Integer.toString(touristsId));
 			
 			
-			//String apartmentId = manager.getApartmentById()
-			
-			//String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
-			//Class.forName("com.mysql.jdbc.Driver");
-			//conn = DriverManager.getConnection(url, "johto_db", "antejoni2007");
 			conn = C3poDataSource.getConnection();
 			System.out.println("Database connection established");
 			
 			
 
 			Statement stmt = conn.createStatement();
-			
-			/* 
-			 * 
-			 */
-			
+
 			String strUpdateTourists = "UPDATE tourists "
 					+ "SET name = '" + nameStr + "', country = '" + countryStr + "', city = '" 
 					+ cityStr + "', numberOfAdults = '" + numberOfAdultsStr 

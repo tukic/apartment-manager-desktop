@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.SwingUtilities;
 
@@ -25,12 +27,20 @@ public class SaveReservation implements Runnable {
 		Connection conn = null;
 		try {
 			
+			//formated to eur currency without symbol
+			DecimalFormat paymentFormat = reservationFrame.getPaymentFormat();
+			String pattern = paymentFormat.toPattern();
+			String newPattern = pattern.replace("\u00A4", "").trim();
+			//delete trailing space
+			newPattern = newPattern.substring(0, newPattern.length()-1);
+			paymentFormat = new DecimalFormat(newPattern);
+			
 			String nameStr = Util.prepareString(reservationFrame.getGuestNameTxtFld().getText());
 			String checkInDateStr = Util.prepareString(reservationFrame.getCheckInDatePicker().getDateStringOrEmptyString());
 			String checkOutDateStr = Util.prepareString(reservationFrame.getCheckOutDatePicker().getDateStringOrEmptyString());
-			String pricePerNightStr = Util.prepareString(reservationFrame.getPricePerNightTxtFld().getText());
-			String totalPriceStr = Util.prepareString(reservationFrame.getTotalPriceTxtFld().getText());
-			String advancedPaymentStr = Util.prepareString(reservationFrame.getAdvancedPaymentTxtFld().getText());
+			String pricePerNightStr = Util.prepareString(paymentFormat.parse(reservationFrame.getPricePerNightTxtFld().getText()).toString());
+			String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
+			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
 			String apartmentNameStr = Util.prepareString(reservationFrame.getApartmentComboBox().getSelectedItem().toString());
 			String numberOfAdultsStr = Util.prepareString(reservationFrame.getNumberOfAdultsTxtFld().getText());
 			String numberOfChildrenStr = Util.prepareString(reservationFrame.getNumberOfChildrenTxtFld().getText());
@@ -163,7 +173,7 @@ public class SaveReservation implements Runnable {
 			initDataThr.start();
 			initDataThr.join();
 			
-			MonthCmbBoxChanged refreshData = new MonthCmbBoxChanged(manager);
+			new MonthCmbBoxChanged(manager);
 			SwingUtilities.invokeLater(() ->
 			new RefreshContentPanel(manager).refresh());
 			

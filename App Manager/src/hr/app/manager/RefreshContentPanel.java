@@ -104,8 +104,8 @@ public class RefreshContentPanel {
 					int reservationId = reservation.getId();
 					LocalDate checkInDate = reservation.getCheckInDate();
 					LocalDate checkOutDate = reservation.getCheckOutDate();
-					String pricePerNight = Integer.toString(reservation.getPricePerNight());
-					String totalPrice = Integer.toString(reservation.getTotalPrice());
+					double pricePerNight = reservation.getPricePerNight();
+					double totalPrice = reservation.getTotalPrice();
 					int touristsId = tourists.getId();
 					String numberOfPersons = Integer.toString(reservation.getTourists().getNumberOfPersons());
 					String numberOfAdults = Integer.toString(reservation.getTourists().getNumberOfAdults());
@@ -116,7 +116,7 @@ public class RefreshContentPanel {
 					String phoneNumber = reservation.getTourists().getPhoneNumber();
 					boolean pets = reservation.getTourists().isPets();
 					boolean advancePaid = reservation.getStatus().equals(ReservationStatus.ADVANCE_PAID);
-					String advancedPayment = Integer.toString(reservation.getAdvancedPayment());
+					double advancedPayment = reservation.getAdvancedPayment();
 					String touristsNote = reservation.getTourists().getTouristsNote();
 					touristsNameBtn.addActionListener(l -> {
 						new ReservationFrame(manager, reservationId, tourists.getName(), checkInDate, checkOutDate, pricePerNight,
