@@ -22,5 +22,10 @@
 	    <artifactId>c3p0</artifactId>
 	    <version>0.9.1.2</version>
 	</dependency>
+	<dependency>
+	    <groupId>com.smattme</groupId>
+	    <artifactId>mysql-backup4j</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
   </dependencies>
 </project>

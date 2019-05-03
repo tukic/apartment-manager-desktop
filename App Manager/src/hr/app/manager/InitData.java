@@ -1,11 +1,15 @@
 package hr.app.manager;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Properties;
 
 import javax.swing.SwingUtilities;
+
+import com.smattme.MysqlExportService;
 
 import hr.app.enumerations.ReservationStatus;
 import hr.app.model.Apartment;
@@ -37,8 +41,6 @@ public class InitData implements Runnable {
 			
 			conn =  C3poDataSource.getConnection();
 			Statement stmt = conn.createStatement();
- 
-			
 			
 			String selectApartment = "select * from apartment";
 			ResultSet apartmentsRset = stmt.executeQuery(selectApartment);
@@ -160,8 +162,6 @@ public class InitData implements Runnable {
 		
 		SwingUtilities.invokeLater(()-> {
 			new RefreshContentPanel(manager).refresh();
-			//manager.getFrame().setVisible(false);
-			//manager.getFrame().setVisible(true);
 		});
 	}
 

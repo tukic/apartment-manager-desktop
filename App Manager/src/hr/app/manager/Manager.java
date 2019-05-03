@@ -2,13 +2,13 @@ package hr.app.manager;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -53,6 +53,10 @@ public class Manager {
 				}
 			}
 		});
+		
+		Thread backupDataStartThr = new Thread(new BackupData());
+		backupDataStartThr.start();
+	
 	}
 
 	/**
@@ -73,7 +77,7 @@ public class Manager {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1006, 634);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
 		topPanel = new JPanel();
@@ -151,6 +155,14 @@ public class Manager {
 		}*/
 
 		//new RefreshContentPanel(this).refresh();
+		
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Thread backupDataFinishThr = new Thread(new BackupData());
+				backupDataFinishThr.start();
+		    }
+		});
 				
 	}
 
