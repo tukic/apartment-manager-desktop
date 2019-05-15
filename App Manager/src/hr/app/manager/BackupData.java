@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
@@ -27,12 +28,27 @@ public class BackupData implements Runnable {
 		MysqlExportService mysqlExportService = new MysqlExportService(properties);
 		
 		try {
+			
+			//create directory backup if not exists;
+			String backupStr = "backup";
+			Path dirPathObj = Paths.get(backupStr);
+	        if(!Files.exists(dirPathObj)) {
+	            try {
+	                // Creating The New Directory Structure
+	                Files.createDirectories(dirPathObj);
+	                System.out.println("! New Directory Successfully Created !");
+	            } catch (IOException ioExceptionObj) {
+	                System.out.println("Problem Occured While Creating The Directory Structure= " + ioExceptionObj.getMessage());
+	            }
+	        }
+	            
 			mysqlExportService.export();
+			String fileName = backupStr.concat("/").concat(LocalDateTime.now()
+					.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")).toString().concat(".txt"));
 			String generatedSql = mysqlExportService.getGeneratedSql();
 			System.out.println(generatedSql);
-			String path = LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyyHHmmssSSS")).toString().concat(".txt");
-			System.out.println(path);
-			try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(path), StandardCharsets.UTF_8, 
+			System.out.println(fileName);
+			try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(fileName), StandardCharsets.UTF_8, 
 					StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
 				bw.write(generatedSql);
 			} catch (IOException e2) {

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Currency;
@@ -23,6 +22,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com.github.lgooddatepicker.components.DatePicker;
+
+import hr.app.model.Apartment;
+
+
+
+
 
 public class ReservationFrame {
 
@@ -216,6 +221,26 @@ public class ReservationFrame {
 		contentPanel.add(totalPriceLbl);
 		
 		totalPriceTxtFld = new JFormattedTextField(paymentFormat);
+		
+		checkInDatePicker.addDateChangeListener(l -> {
+			if(checkOutDatePicker.getDate() != null) {
+				Apartment selectedApartment = manager.getApartmentByName(apartmentComboBox.getSelectedItem().toString());
+				totalPriceTxtFld.setText(Double.toString
+						(selectedApartment.getTotalPriceInDateRange
+								(l.getNewDate(), checkOutDatePicker.getDate())));
+			}
+		});
+		
+		checkOutDatePicker.addDateChangeListener(l -> {
+			if(checkInDatePicker.getDate() != null) {
+				Apartment selectedApartment = manager.getApartmentByName(apartmentComboBox.getSelectedItem().toString());
+				totalPriceTxtFld.setText(Double.toString
+						(selectedApartment.getTotalPriceInDateRange
+								(checkInDatePicker.getDate(), l.getNewDate())));
+			}
+		});
+		
+
 		
 		/*DecimalFormatSymbols symbols = paymentFormat.getDecimalFormatSymbols();
 		symbols.setCurrencySymbol(""); // Don't use null.

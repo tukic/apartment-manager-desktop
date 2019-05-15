@@ -1,12 +1,9 @@
 package hr.app.manager;
 
-import java.awt.event.ActionEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 
 import javax.swing.SwingUtilities;
 
