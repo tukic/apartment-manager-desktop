@@ -37,6 +37,7 @@ public class Manager {
 	private JPanel centralPanel;
 	private JPanel topPanel;
 	private JButton newReservationBtn;
+	private JButton newApartmentBtn;
 
 	/**
 	 * Launch the application.
@@ -87,6 +88,9 @@ public class Manager {
 		newReservationBtn = new JButton("Nova rezervacija");
 		newReservationBtn.addActionListener(new ReservationClicked(this));
 		//topPanel.add(newReservationBtn);		
+		
+		newApartmentBtn = new JButton("Novi apartman");
+		newApartmentBtn.addActionListener(l -> new ApartmentFrame(this));
 
 		centralPanel = new JPanel();
 		frame.getContentPane().add(centralPanel, BorderLayout.CENTER);
@@ -210,6 +214,10 @@ public class Manager {
 		return newReservationBtn;
 	}
 	
+	public JButton getNewApartmentBtn() {
+		return newApartmentBtn;
+	}
+	
 	public JPanel getTopPanel() {
 		return topPanel;
 	}
@@ -246,7 +254,21 @@ public class Manager {
 		return apartmentsStringArray;
 	}
 	
+	/*
+	 * finds apartment by name
+	 * if apartment not found return null
+	 */
+	public Apartment getApartmentByName(String name) {
+		for(Apartment apartment : apartmentList) {
+			if(apartment.getName().equals(name)) {
+				return apartment;
+			}
+		}
+		return null;
+	}
+	
 	public void removeAllData() {
 		apartmentList.clear();
 	}
+	
 }

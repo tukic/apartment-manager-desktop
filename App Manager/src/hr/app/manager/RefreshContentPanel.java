@@ -31,6 +31,7 @@ public class RefreshContentPanel {
 		contentPanel.removeAll();
 		
 		manager.getTopPanel().add(manager.getNewReservationBtn());
+		manager.getTopPanel().add(manager.getNewApartmentBtn());
 		manager.getCentralPanel().add(manager.getMonthCmbBox(), BorderLayout.PAGE_START);
 
 		String monthString = (String) manager.getMonthCmbBox().getSelectedItem();

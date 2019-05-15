@@ -6,4 +6,5 @@ public class Util {
 		if(string.equals("")) return "NULL";
 		else return string;
 	}
+	
 }

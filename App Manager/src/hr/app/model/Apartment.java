@@ -3,11 +3,11 @@ package hr.app.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Apartment {
 	
@@ -21,7 +21,7 @@ public class Apartment {
 	HashMap<LocalDate, Reservation> reservedDatesMap = new LinkedHashMap<>();
 	List<Reservation> reservationList = new ArrayList<>();
 	List<LocalDate> reservedDates;
-
+	LinkedHashMap<LocalDate, Double> prices = new LinkedHashMap<>();
 	
 	public Apartment(int id) {
 		super();
@@ -30,7 +30,8 @@ public class Apartment {
 
 	
 
-	public Apartment(int id, String name, String internalName, int baseCapacity, int additionalCapacity, String note) {
+	public Apartment(int id, String name, String internalName,
+			int baseCapacity, int additionalCapacity, String note, List<PricePerNight> pricesList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -39,9 +40,10 @@ public class Apartment {
 		this.additionalCapacity = additionalCapacity;
 		this.apartmentNote = note;
 		
+		for(PricePerNight ppn : pricesList) {
+			addPriceToPrices(ppn.getFrom(), ppn.getTo(), ppn.getPrice());
+		}
 	}
-
-
 
 	public Apartment(int id, String name, Reservation ... r) {
 		this.id = id;
@@ -50,6 +52,7 @@ public class Apartment {
 		
 		reservedDates = new LinkedList<>();
 		reservedDatesMap = new HashMap<>();
+		
 	}
 
 	
@@ -63,6 +66,22 @@ public class Apartment {
 		for(LocalDate date : r.getReservedDates()) {
 			reservedDatesMap.put(date, r);
 		}
+	}
+	
+	private void addPriceToPrices(LocalDate from, LocalDate to, double price) {
+		for(LocalDate date = from; date.isBefore(to.plusDays(1)); date = date.plusDays(1)) {
+			prices.put(date, price);
+		}
+	}
+	
+	public double getTotalPriceInDateRange(LocalDate from, LocalDate to) {
+		List<LocalDate> dates = from.datesUntil(to).collect(Collectors.toList());
+		double sum = 0.f;
+		for(LocalDate date : dates) {
+			if(prices.get(date) != null)
+				sum += prices.get(date);
+		}		
+		return sum;
 	}
 	
 	public String getName() {
