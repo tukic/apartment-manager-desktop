@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import hr.app.manager.ApartmentFrame.FromToPrice;
@@ -71,6 +72,10 @@ public class SaveApartment implements Runnable {
 				stmt.executeUpdate(savePricePerPeriodStr);
 			}
 			
+			manager.removeAllData();
+			Thread initDataThr = new Thread(new InitData(manager));
+			initDataThr.start();
+			initDataThr.join();
 			
 			new MonthCmbBoxChanged(manager);
 			SwingUtilities.invokeLater(() ->
@@ -78,6 +83,8 @@ public class SaveApartment implements Runnable {
 			apartmentFrame.getSaveBtn().setEnabled(true);
 			
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(apartmentFrame.getFrame(),
+					Util.standardErrorBody(), Util.standardErrorTitle(), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 

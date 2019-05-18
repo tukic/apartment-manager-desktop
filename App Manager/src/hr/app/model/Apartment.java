@@ -44,6 +44,18 @@ public class Apartment {
 			addPriceToPrices(ppn.getFrom(), ppn.getTo(), ppn.getPrice());
 		}
 	}
+	
+	public Apartment(int id, String name, String internalName,
+			int baseCapacity, int additionalCapacity, String note) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.internalName = internalName;
+		this.baseCapacity = baseCapacity;
+		this.additionalCapacity = additionalCapacity;
+		this.apartmentNote = note;
+		
+	}
 
 	public Apartment(int id, String name, Reservation ... r) {
 		this.id = id;

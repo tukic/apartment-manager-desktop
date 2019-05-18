@@ -4,7 +4,6 @@
 package hr.app.manager;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.util.LinkedList;
@@ -21,7 +20,7 @@ import javax.swing.JTextField;
 
 import com.github.lgooddatepicker.components.DatePicker;
 
-import hr.app.model.PricePerNight;
+import hr.app.model.Apartment;
 
 /**
  * @author Tomislav Ukiæ
@@ -69,6 +68,12 @@ public class ApartmentFrame {
 	private JTextArea notesTxtArea;
 	private List<FromToPrice> fromToList;
 	private JButton saveBtn;
+	private boolean update;
+	private int apartmentId;
+	private JPanel apartmentListPanel;
+	private JButton apartmentBtn;
+	private JPanel splitPanel;
+	private JPanel container;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -83,9 +88,12 @@ public class ApartmentFrame {
 		});
 	}
 
-
-	public ApartmentFrame(Manager manager) {
+	/*
+	 * if update open list of apartments at left
+	 */
+	public ApartmentFrame(Manager manager, boolean update) {
 		this.manager = manager;
+		this.update = update;
 		initialize();
 		frame.setVisible(true);
 	}
@@ -100,7 +108,9 @@ public class ApartmentFrame {
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		JPanel container = new JPanel(new BorderLayout(10, 10));
+		container = new JPanel(new BorderLayout(10, 10));
+		splitPanel = new JPanel(new BorderLayout(10, 10));
+		
 		JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
 		JPanel informationPanel = new JPanel(new GridLayout(4, 2));
 		JPanel pricePerPeriodPanel = new JPanel(new GridLayout(0, 3));
@@ -150,14 +160,38 @@ public class ApartmentFrame {
 		JScrollPane notesScrollPane = new JScrollPane(notesTxtArea);
 		notesPanel.add(notesScrollPane, BorderLayout.CENTER);
 		
-		saveBtn = new JButton("Spremi");
+		if(update) {
+			saveBtn = new JButton("Spremi promjene");
+		}
+		else {
+			saveBtn = new JButton("Spremi");
+		}
 		notesPanel.add(saveBtn, BorderLayout.PAGE_END);
 		
 		bottomPanel.add(notesPanel, BorderLayout.PAGE_END);
 		
 		contentPanel.add(bottomPanel, BorderLayout.PAGE_END);
 		
-		container.add(contentPanel);
+		splitPanel.add(contentPanel, BorderLayout.CENTER);
+		
+		if(update) {
+			apartmentListPanel = new JPanel(new GridLayout(0,1));
+			for(Apartment apartment : manager.getApartmentList()) {
+				apartmentBtn = new JButton(apartment.getName());
+				apartmentBtn.addActionListener(l -> {
+					apartmentNameTxtFld.setText(apartment.getName());
+					apartmentCodeTxtFld.setText(apartment.getInternalName());
+					apartmentCapacityTxtFld.setText(Integer.toString(apartment.getBaseCapacity()));
+					apartmentAdditionalCapacityTxtFld.setText(Integer.toString(apartment.getAdditionalCapacity()));
+					notesTxtArea.setText(apartment.getApartmentNote());
+					apartmentId = apartment.getId();
+				});
+				apartmentListPanel.add(apartmentBtn);
+			}
+			splitPanel.add(apartmentListPanel, BorderLayout.LINE_START);
+		}		
+		
+		container.add(splitPanel);
 		frame.add(container);
 		
 		fromToList = new LinkedList<>();
@@ -191,20 +225,38 @@ public class ApartmentFrame {
 			frame.setVisible(true);
 		});
 		
-		saveBtn.addActionListener(l-> {
-			saveBtn.setEnabled(false);
-			List<FromToPrice> tmp = new LinkedList<>();
-			for(FromToPrice ftp : fromToList) {
-				if(ftp.from.getText().equals("") || ftp.to.getText().equals("") 
-						|| ftp.price.getText().equals("")) {
-					tmp.add(ftp);
+
+		if(update) {
+			saveBtn.addActionListener(l-> {
+				saveBtn.setEnabled(false);
+				List<FromToPrice> tmp = new LinkedList<>();
+				for(FromToPrice ftp : fromToList) {
+					if(ftp.from.getText().equals("") || ftp.to.getText().equals("") 
+							|| ftp.price.getText().equals("")) {
+						tmp.add(ftp);
+					}
 				}
-			}
-			fromToList.removeAll(tmp);
-			Thread saveApartmentThr = new Thread(new SaveApartment(this, manager));
-			saveApartmentThr.start();
-			
-		});
+				fromToList.removeAll(tmp);
+				Thread saveApartmentThr = new Thread(new UpdateApartment(this, manager, apartmentId));
+				saveApartmentThr.start();
+			});
+		}
+		else {
+			saveBtn.addActionListener(l-> {
+				saveBtn.setEnabled(false);
+				List<FromToPrice> tmp = new LinkedList<>();
+				for(FromToPrice ftp : fromToList) {
+					if(ftp.from.getText().equals("") || ftp.to.getText().equals("") 
+							|| ftp.price.getText().equals("")) {
+						tmp.add(ftp);
+					}
+				}
+				fromToList.removeAll(tmp);
+				Thread saveApartmentThr = new Thread(new SaveApartment(this, manager));
+				saveApartmentThr.start();
+				
+			});
+		}
 		
 	}
 
@@ -220,6 +272,30 @@ public class ApartmentFrame {
 		list.add(new FromToPrice(startPeriodPicker, endPeriodPicker, periodPriceTxtFld));
 	}
 	
+	public void refreshApartments(Manager manager) {
+		this.manager = manager;
+		splitPanel.remove(this.apartmentListPanel);
+		apartmentListPanel = new JPanel(new GridLayout(0,1));
+		for(Apartment apartment : manager.getApartmentList()) {
+			apartmentBtn = new JButton(apartment.getName());
+			apartmentBtn.addActionListener(l -> {
+				apartmentNameTxtFld.setText(apartment.getName());
+				apartmentCodeTxtFld.setText(apartment.getInternalName());
+				apartmentCapacityTxtFld.setText(Integer.toString(apartment.getBaseCapacity()));
+				apartmentAdditionalCapacityTxtFld.setText(Integer.toString(apartment.getAdditionalCapacity()));
+				notesTxtArea.setText(apartment.getApartmentNote());
+				apartmentId = apartment.getId();
+			});
+			apartmentListPanel.add(apartmentBtn);
+		}
+		splitPanel.add(apartmentListPanel, BorderLayout.LINE_START);
+		container.add(splitPanel);
+		frame.setVisible(true);
+	}
+	
+	public JFrame getFrame() {
+		return frame;
+	}
 	
 	public JTextField getApartmentNameTxtFld() {
 		return apartmentNameTxtFld;
