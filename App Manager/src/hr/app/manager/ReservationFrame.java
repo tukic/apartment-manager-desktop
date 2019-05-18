@@ -210,6 +210,11 @@ public class ReservationFrame {
 		advancedPaymentTxtFld = new JFormattedTextField(paymentFormat);
 		advancedPaymentTxtFld.setColumns(10);
 		contentPanel.add(advancedPaymentTxtFld);
+		if(advancedPaymentCheckBox.isSelected()) {
+			advancedPaymentTxtFld.setEditable(true);
+		} else {
+			advancedPaymentTxtFld.setEditable(false);
+		}
 		
 		JLabel countryLbl = new JLabel("Dr\u017Eava");
 		contentPanel.add(countryLbl);
@@ -283,6 +288,15 @@ public class ReservationFrame {
 		
 		bottomPanel.add(notesLbl, BorderLayout.PAGE_START);
 		bottomPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		advancedPaymentCheckBox.addActionListener(l -> {
+			if(advancedPaymentCheckBox.isSelected()) {
+				advancedPaymentTxtFld.setEditable(true);
+			}
+			else {
+				advancedPaymentTxtFld.setEditable(false);
+			}
+		});
 		
 		if(!update) {
 			saveBtn = new JButton("Spremi");

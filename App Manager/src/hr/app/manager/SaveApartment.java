@@ -43,8 +43,8 @@ public class SaveApartment implements Runnable {
 			
 			String saveApartmentStr = "INSERT INTO apartment (apartmentName, internalName"
 					+ ", baseCapacity, additionalCapacity, apartmentNote) "
-					+ "VALUES ('" + name + "' , '" + code + "' ,'" + baseCapacity + "', "
-							+ "'" + additionalCapacity + "', '" + notes + "');";
+					+ "VALUES (" + name + ", " + code + ", " + baseCapacity + ", "
+							+ additionalCapacity + ", " + notes + ");";
 			
 			System.out.println("The SQL query is: " + saveApartmentStr); // Echo For debugging
 			System.out.println();
@@ -52,7 +52,7 @@ public class SaveApartment implements Runnable {
 			stmt.executeUpdate(saveApartmentStr);
 			
 			String selectApartmentIdStr = "SELECT apartmentId FROM apartment"
-					+ " WHERE apartmentName LIKE '" + name + "';";
+					+ " WHERE apartmentName LIKE " + name + ";";
 			System.out.println(selectApartmentIdStr);
 			ResultSet apartmentIdRset = stmt.executeQuery(selectApartmentIdStr);
 			
@@ -66,8 +66,8 @@ public class SaveApartment implements Runnable {
 				String price = Util.prepareString(ftp.price.getText());
 				
 				String savePricePerPeriodStr = "INSERT INTO pricePerNight (apartmentId, priceFrom,"
-						+ " priceTo, price) VALUES('" + apartmentIdStr + "', '" + from + "', "
-								+ "'" + to +  "', '" + price + "');";
+						+ " priceTo, price) VALUES(" + apartmentIdStr + ", " + from + ", "
+								+ to +  ", " + price + ");";
 				stmt.executeUpdate(savePricePerPeriodStr);
 			}
 			

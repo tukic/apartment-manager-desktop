@@ -46,7 +46,7 @@ public class SaveReservation implements Runnable {
 			String countryStr = Util.prepareString(reservationFrame.getCountryTxtFld().getText());
 			String emailStr = Util.prepareString(reservationFrame.getEmailTxtFld().getText());
 			String phoneNumberStr = Util.prepareString(reservationFrame.getPhoneNumberTxtFld().getText());
-			String animalsStr = Util.prepareString(Boolean.toString(reservationFrame.getAnimalsCheckBox().isSelected()));
+			String animalsStr = Util.prepareBoolean(reservationFrame.getAnimalsCheckBox().isSelected());
 			String notesStr = Util.prepareString(reservationFrame.getNotesTxtArea().getText());
 			
 			//String apartmentId = manager.getApartmentById()
@@ -65,24 +65,24 @@ public class SaveReservation implements Runnable {
 			 */
 			
 			String strUpdateTourists = "INSERT INTO tourists (name, country, city, numberOfAdults, numberOfChildren, numberOfPersons, email, phoneNumber, pets, touristsNote)"
-					+ " VALUES ('" + nameStr + "','" + countryStr + "','" + cityStr + "','" + numberOfAdultsStr + "','" + numberOfChildrenStr + "','" +  numberOfPersonsStr + "','" 
-					+ emailStr + "','" + phoneNumberStr + "'," + animalsStr + ",'" + notesStr +  "');";	
+					+ " VALUES (" + nameStr + "," + countryStr + "," + cityStr + "," + numberOfAdultsStr + "," + numberOfChildrenStr + "," +  numberOfPersonsStr + "," 
+					+ emailStr + "," + phoneNumberStr + "," + animalsStr + "," + notesStr +  ");";	
 			
 			System.out.println("The SQL query is: " + strUpdateTourists); // Echo For debugging
 			System.out.println();
 			
 			stmt.executeUpdate(strUpdateTourists);
-			System.out.println("The SQL query is SELECT touristsId FROM tourists WHERE name LIKE '" + nameStr + "';");
-			ResultSet touristsIdRset = stmt.executeQuery("SELECT touristsId FROM tourists WHERE name LIKE '" + nameStr + "';");
+			System.out.println("The SQL query is SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
+			ResultSet touristsIdRset = stmt.executeQuery("SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
 			touristsIdRset.next();
 			String touristsIdStr = touristsIdRset.getString("touristsId");
 			
-			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE '" + apartmentNameStr + "';");
+			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE " + apartmentNameStr + ";");
 			apartmentIdRset.next();
 			String apartmentIdStr = apartmentIdRset.getString("apartmentId");
-			String strUpdateReservation = "INSERT INTO reservation (checkInDate, checkOutDate, pricePerNight, totalPrice, confirmed, advancedPayment, apartmentId, touristsId) VALUES ('" + 
-					checkInDateStr + "','" + checkOutDateStr + "','" + pricePerNightStr + "','" + totalPriceStr 
-					+ "','reservation','" + advancedPaymentStr + "','" + apartmentIdStr + "','" + touristsIdStr + "');";
+			String strUpdateReservation = "INSERT INTO reservation (checkInDate, checkOutDate, pricePerNight, totalPrice, confirmed, advancedPayment, apartmentId, touristsId) VALUES (" + 
+					checkInDateStr + "," + checkOutDateStr + "," + pricePerNightStr + "," + totalPriceStr 
+					+ ",'reservation'," + advancedPaymentStr + "," + apartmentIdStr + "," + touristsIdStr + ");";
 			System.out.println("The SQL query is: " + strUpdateReservation );
 			
 			stmt.executeUpdate(strUpdateReservation);
