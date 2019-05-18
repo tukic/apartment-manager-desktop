@@ -5,7 +5,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import com.google.protobuf.Extension.MessageType;
 
 import hr.app.util.Util;
 
@@ -35,9 +38,14 @@ public class SaveReservation implements Runnable {
 			String nameStr = Util.prepareString(reservationFrame.getGuestNameTxtFld().getText());
 			String checkInDateStr = Util.prepareString(reservationFrame.getCheckInDatePicker().getDateStringOrEmptyString());
 			String checkOutDateStr = Util.prepareString(reservationFrame.getCheckOutDatePicker().getDateStringOrEmptyString());
-			String pricePerNightStr = Util.prepareString(paymentFormat.parse(reservationFrame.getPricePerNightTxtFld().getText()).toString());
-			String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
-			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
+			String pricePerNightStr = Util.prepareString(paymentFormat.parse(
+					Util.prepareToParseMoney(reservationFrame.getPricePerNightTxtFld().getText()).toString()).toString());
+			String totalPriceStr = Util.prepareString(paymentFormat.parse(
+					Util.prepareToParseMoney(reservationFrame.getTotalPriceTxtFld().getText()).toString()).toString());
+			//String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
+			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(
+					Util.prepareToParseMoney(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString()).toString());
+			//String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
 			String apartmentNameStr = Util.prepareString(reservationFrame.getApartmentComboBox().getSelectedItem().toString());
 			String numberOfAdultsStr = Util.prepareString(reservationFrame.getNumberOfAdultsTxtFld().getText());
 			String numberOfChildrenStr = Util.prepareString(reservationFrame.getNumberOfChildrenTxtFld().getText());
@@ -176,6 +184,8 @@ public class SaveReservation implements Runnable {
 			
 			reservationFrame.getSaveBtn().setEnabled(true);
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(reservationFrame.getFrame(),
+					Util.standardErrorBody(), Util.standardErrorTitle(), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 

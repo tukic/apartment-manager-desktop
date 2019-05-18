@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -38,6 +37,7 @@ public class Manager {
 	private JPanel topPanel;
 	private JButton newReservationBtn;
 	private JButton newApartmentBtn;
+	private JButton updateApartmentBtn;
 
 	/**
 	 * Launch the application.
@@ -85,12 +85,19 @@ public class Manager {
 		frame.getContentPane().add(topPanel, BorderLayout.NORTH);
 		topPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		
+		
+		/*
+		 * buttons at top added to panel in refreshContentPanel
+		 */
 		newReservationBtn = new JButton("Nova rezervacija");
 		newReservationBtn.addActionListener(new ReservationClicked(this));
 		//topPanel.add(newReservationBtn);		
 		
 		newApartmentBtn = new JButton("Novi apartman");
-		newApartmentBtn.addActionListener(l -> new ApartmentFrame(this));
+		newApartmentBtn.addActionListener(l -> new ApartmentFrame(this, false));
+		
+		updateApartmentBtn = new JButton("Uredi apartmane");
+		updateApartmentBtn.addActionListener(l -> new ApartmentFrame(this, true));
 
 		centralPanel = new JPanel();
 		frame.getContentPane().add(centralPanel, BorderLayout.CENTER);
@@ -216,6 +223,10 @@ public class Manager {
 	
 	public JButton getNewApartmentBtn() {
 		return newApartmentBtn;
+	}
+	
+	public JButton getUpdateApartmentBtn() {
+		return updateApartmentBtn;
 	}
 	
 	public JPanel getTopPanel() {

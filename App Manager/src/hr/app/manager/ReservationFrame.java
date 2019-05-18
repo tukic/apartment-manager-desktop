@@ -56,6 +56,7 @@ public class ReservationFrame {
 	private JCheckBox advancedPaymentCheckBox;
 	private JTextArea notesTxtArea;
 	private DecimalFormat paymentFormat;
+	private JPanel container;
 
 	/**
 	 * Launch the application.
@@ -111,7 +112,12 @@ public class ReservationFrame {
 		emailTxtFld.setText(email);
 		phoneNumberTxtFld.setText(phoneNumber);
 		animalsCheckBox.setSelected(animals);
-		advancedPaymentCheckBox.setSelected(advancePaid);
+		advancedPaymentCheckBox.setSelected(Double.compare(advancedPayment, 0.f) != 0);
+		if(advancedPaymentCheckBox.isSelected()) {
+			advancedPaymentTxtFld.setEditable(true);
+		} else {
+			advancedPaymentTxtFld.setEditable(false);
+		}
 		advancedPaymentTxtFld.setText(paymentFormat.format(advancedPayment));
 		notesTxtArea.setText(notes);
 		int i = 0;
@@ -145,7 +151,7 @@ public class ReservationFrame {
 		System.out.println(newPattern);
 		paymentFormat = new DecimalFormat(newPattern);
 		
-		JPanel container = new JPanel(new BorderLayout());
+		container = new JPanel(new BorderLayout());
 		JPanel contentPanel = new JPanel(new GridLayout(0, 4, 10, 5));
 		
 		JLabel guestNameLbl = new JLabel("Ime gosta");
@@ -227,7 +233,7 @@ public class ReservationFrame {
 		
 		totalPriceTxtFld = new JFormattedTextField(paymentFormat);
 		
-		checkInDatePicker.addDateChangeListener(l -> {
+		/*checkInDatePicker.addDateChangeListener(l -> {
 			if(checkOutDatePicker.getDate() != null) {
 				Apartment selectedApartment = manager.getApartmentByName(apartmentComboBox.getSelectedItem().toString());
 				totalPriceTxtFld.setText(Double.toString
@@ -517,6 +523,14 @@ public class ReservationFrame {
 			saveReservationThr.start();
 		});*/
 		
+	}
+	
+	public JPanel getContainer() {
+		return container;
+	}
+	
+	public JFrame getFrame() {
+		return frame;
 	}
 	
 	public JTextField getGuestNameTxtFld() {

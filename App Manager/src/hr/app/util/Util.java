@@ -13,4 +13,17 @@ public class Util {
 		else 
 			return "FALSE";
 	}
+	
+	public static String prepareToParseMoney(String string) {
+		if(string.equals("")) return "0";
+		else return string;
+	}
+	
+	public static String standardErrorBody() {
+		return "Provjerite jesu li svi podatci uneseni u ispravnom formatu";
+	}
+	
+	public static String standardErrorTitle() {
+		return "Greška";
+	}
 }

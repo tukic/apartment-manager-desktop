@@ -45,7 +45,9 @@ public class InitData implements Runnable {
 			String selectApartment = "select * from apartment";
 			ResultSet apartmentsRset = stmt.executeQuery(selectApartment);
 			while(apartmentsRset.next()) {
-				manager.addToApartmentList(new Apartment(apartmentsRset.getInt("apartmentId"), apartmentsRset.getString("apartmentName")));
+				manager.addToApartmentList(new Apartment(apartmentsRset.getInt("apartmentId"), apartmentsRset.getString("apartmentName"),
+						apartmentsRset.getString("internalName"), apartmentsRset.getInt("baseCapacity"), 
+						apartmentsRset.getInt("additionalCapacity"), apartmentsRset.getString("apartmentNote")));
 			}
 			
 			
