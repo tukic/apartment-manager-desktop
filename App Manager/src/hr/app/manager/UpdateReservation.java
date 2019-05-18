@@ -53,7 +53,7 @@ public class UpdateReservation implements Runnable {
 			String countryStr = Util.prepareString(reservationFrame.getCountryTxtFld().getText());
 			String emailStr = Util.prepareString(reservationFrame.getEmailTxtFld().getText());
 			String phoneNumberStr = Util.prepareString(reservationFrame.getPhoneNumberTxtFld().getText());
-			String animalsStr = Util.prepareString(Boolean.toString(reservationFrame.getAnimalsCheckBox().isSelected()));
+			String animalsStr = Util.prepareBoolean(reservationFrame.getAnimalsCheckBox().isSelected());
 			String notesStr = Util.prepareString(reservationFrame.getNotesTxtArea().getText());
 			String touristsIdStr = Util.prepareString(Integer.toString(touristsId));
 			
@@ -66,13 +66,13 @@ public class UpdateReservation implements Runnable {
 			Statement stmt = conn.createStatement();
 
 			String strUpdateTourists = "UPDATE tourists "
-					+ "SET name = '" + nameStr + "', country = '" + countryStr + "', city = '" 
-					+ cityStr + "', numberOfAdults = '" + numberOfAdultsStr 
-					+ "', numberOfChildren = '" + numberOfChildrenStr + "', numberOfPersons = '" 
-					+ numberOfPersonsStr + "', email = '" + emailStr
-					+ "', phoneNumber = '" + phoneNumberStr + "', pets = " + animalsStr 
-					+ ", touristsNote = '" + notesStr 
-					+ "' WHERE touristsId = '" + touristsId + "'";
+					+ "SET name = " + nameStr + ", country = " + countryStr + ", city = " 
+					+ cityStr + ", numberOfAdults = " + numberOfAdultsStr 
+					+ ", numberOfChildren = " + numberOfChildrenStr + ", numberOfPersons = " 
+					+ numberOfPersonsStr + ", email = " + emailStr
+					+ ", phoneNumber = " + phoneNumberStr + ", pets = " + animalsStr 
+					+ ", touristsNote = " + notesStr 
+					+ " WHERE touristsId = " + touristsId;
 			
 			System.out.println("The SQL query is: " + strUpdateTourists); // Echo For debugging
 			System.out.println();
@@ -83,15 +83,15 @@ public class UpdateReservation implements Runnable {
 			//touristsIdRset.next();
 			//String touristsIdStr = touristsIdRset.getString("touristsId");
 			
-			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE '" + apartmentNameStr + "';");
+			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE " + apartmentNameStr + ";");
 			apartmentIdRset.next();
 			String apartmentIdStr = apartmentIdRset.getString("apartmentId");
 			String strUpdateReservation = "UPDATE reservation "
-					+ "SET checkInDate = '" + checkInDateStr + "', checkOutDate = '" + checkOutDateStr 
-					+ "', pricePerNight = '" + pricePerNightStr + "', totalPrice = '" + totalPriceStr 
-					+ "', confirmed = 'reservation', advancedPayment = '" + advancedPaymentStr 
-					+ "', apartmentId = '" + apartmentIdStr + "', touristsId = '" + touristsIdStr 
-					+ "' WHERE reservationId = '" + reservationId + "'";
+					+ "SET checkInDate = " + checkInDateStr + ", checkOutDate = " + checkOutDateStr 
+					+ ", pricePerNight = " + pricePerNightStr + ", totalPrice = " + totalPriceStr 
+					+ ", confirmed = 'reservation', advancedPayment = " + advancedPaymentStr 
+					+ ", apartmentId = " + apartmentIdStr + ", touristsId = " + touristsIdStr 
+					+ " WHERE reservationId = " + reservationId;
 			System.out.println("The SQL query is: " + strUpdateReservation );
 			
 			
