@@ -3,6 +3,7 @@ package hr.app.manager;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.font.OpenType;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -57,6 +59,7 @@ public class ReservationFrame {
 	private JTextArea notesTxtArea;
 	private DecimalFormat paymentFormat;
 	private JPanel container;
+	private JButton deleteBtn;
 
 	/**
 	 * Launch the application.
@@ -304,6 +307,7 @@ public class ReservationFrame {
 			}
 		});
 		
+		JPanel bottomButtonsPanel = new JPanel();
 		if(!update) {
 			saveBtn = new JButton("Spremi");
 			saveBtn.addActionListener(l -> {
@@ -311,6 +315,7 @@ public class ReservationFrame {
 				Thread saveReservationThr = new Thread(new SaveReservation(this, manager));
 				saveReservationThr.start();
 			});
+			bottomButtonsPanel.add(saveBtn);
 		} else {
 			saveBtn = new JButton("Spremi izmjene");
 			saveBtn.addActionListener(l -> {
@@ -318,10 +323,25 @@ public class ReservationFrame {
 				Thread saveReservationThr = new Thread(new UpdateReservation(this, manager, reservationId, touristsId));
 				saveReservationThr.start();
 			});
+			bottomButtonsPanel.add(saveBtn);
+			deleteBtn = new JButton("Obriši rezervaciju");
+			deleteBtn.addActionListener(l -> {
+				deleteBtn.setEnabled(false);
+				int confirmedDeleting = JOptionPane.showConfirmDialog(frame, "Jeste li sigurni da želite obrisati rezervaciju?",
+						"Potvrda brisanja", JOptionPane.YES_NO_OPTION, JOptionPane.CANCEL_OPTION);
+				if(confirmedDeleting == 0) {
+					Thread deleteReservationThr = new Thread(new DeleteReservation(this, manager, reservationId, touristsId));
+					deleteReservationThr.start();
+				}
+				else {
+					deleteBtn.setEnabled(true);
+				}
+			});
+			bottomButtonsPanel.add(deleteBtn);
 		}
 		
-		
-		bottomPanel.add(saveBtn, BorderLayout.PAGE_END);
+
+		bottomPanel.add(bottomButtonsPanel, BorderLayout.PAGE_END);
 		
 		container.add(contentPanel, BorderLayout.CENTER);
 		container.add(bottomPanel, BorderLayout.PAGE_END);
@@ -603,6 +623,10 @@ public class ReservationFrame {
 
 	public JButton getSaveBtn() {
 		return saveBtn;
+	}
+	
+	public JButton getDeleteBtn() {
+		return deleteBtn;
 	}
 	
 	public DecimalFormat getPaymentFormat() {

@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -74,6 +75,7 @@ public class ApartmentFrame {
 	private JButton apartmentBtn;
 	private JPanel splitPanel;
 	private JPanel container;
+	private AbstractButton deleteBtn;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -166,13 +168,9 @@ public class ApartmentFrame {
 		else {
 			saveBtn = new JButton("Spremi");
 		}
-		notesPanel.add(saveBtn, BorderLayout.PAGE_END);
 		
-		bottomPanel.add(notesPanel, BorderLayout.PAGE_END);
-		
-		contentPanel.add(bottomPanel, BorderLayout.PAGE_END);
-		
-		splitPanel.add(contentPanel, BorderLayout.CENTER);
+		JPanel bottomButtonsPanel = new JPanel();
+		bottomButtonsPanel.add(saveBtn);
 		
 		if(update) {
 			apartmentListPanel = new JPanel(new GridLayout(0,1));
@@ -190,10 +188,7 @@ public class ApartmentFrame {
 			}
 			splitPanel.add(apartmentListPanel, BorderLayout.LINE_START);
 		}		
-		
-		container.add(splitPanel);
-		frame.add(container);
-		
+			
 		fromToList = new LinkedList<>();
 		
 		pricePerPeriodPanel.add(new JLabel("Od"));
@@ -229,17 +224,45 @@ public class ApartmentFrame {
 		if(update) {
 			saveBtn.addActionListener(l-> {
 				saveBtn.setEnabled(false);
-				List<FromToPrice> tmp = new LinkedList<>();
-				for(FromToPrice ftp : fromToList) {
-					if(ftp.from.getText().equals("") || ftp.to.getText().equals("") 
-							|| ftp.price.getText().equals("")) {
-						tmp.add(ftp);
+				if(apartmentId == 0) {
+					JOptionPane.showInternalMessageDialog(frame, "Nije odabran niti jedan apartman",
+							"Greška", JOptionPane.INFORMATION_MESSAGE);
+					saveBtn.setEnabled(true);
+				} else {
+					List<FromToPrice> tmp = new LinkedList<>();
+					for(FromToPrice ftp : fromToList) {
+						if(ftp.from.getText().equals("") || ftp.to.getText().equals("") 
+								|| ftp.price.getText().equals("")) {
+							tmp.add(ftp);
+						}
 					}
+					fromToList.removeAll(tmp);
+					Thread saveApartmentThr = new Thread(new UpdateApartment(this, manager, apartmentId));
+					saveApartmentThr.start();
 				}
-				fromToList.removeAll(tmp);
-				Thread saveApartmentThr = new Thread(new UpdateApartment(this, manager, apartmentId));
-				saveApartmentThr.start();
 			});
+			
+			deleteBtn = new JButton("Obriši apartman");
+			deleteBtn.addActionListener(l -> {
+				deleteBtn.setEnabled(false);
+				if(apartmentId == 0) {
+					JOptionPane.showMessageDialog(frame, "Nije odabran niti jedan apartman",
+							"Greška", JOptionPane.WARNING_MESSAGE);
+					deleteBtn.setEnabled(true);
+				} else {
+					int confirmedDeleting = JOptionPane.showConfirmDialog(frame, "Jeste li sigurni da želite obrisati apartman?",
+							"Potvrda brisanja", JOptionPane.YES_NO_OPTION, JOptionPane.CANCEL_OPTION);
+					if(confirmedDeleting == 0) {
+						Thread deleteApartment = new Thread(new DeleteApartment(this, manager, apartmentId));
+						deleteApartment.start();
+					}
+					else {
+						deleteBtn.setEnabled(true);
+					}
+				}	
+			});
+			
+			bottomButtonsPanel.add(deleteBtn);
 		}
 		else {
 			saveBtn.addActionListener(l-> {
@@ -257,6 +280,17 @@ public class ApartmentFrame {
 				
 			});
 		}
+		
+		notesPanel.add(bottomButtonsPanel, BorderLayout.PAGE_END);
+		
+		bottomPanel.add(notesPanel, BorderLayout.PAGE_END);
+		
+		contentPanel.add(bottomPanel, BorderLayout.PAGE_END);
+		
+		splitPanel.add(contentPanel, BorderLayout.CENTER);
+		
+		container.add(splitPanel);
+		frame.add(container);
 		
 	}
 
@@ -319,6 +353,10 @@ public class ApartmentFrame {
 	
 	public JButton getSaveBtn() {
 		return saveBtn;
+	}
+	
+	public AbstractButton getDeleteBtn() {
+		return deleteBtn;
 	}
 	
 	public List<FromToPrice> getFromToList() {
