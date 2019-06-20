@@ -4,11 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
-import com.google.protobuf.Extension.MessageType;
 
 import hr.app.util.Util;
 
@@ -17,7 +16,8 @@ public class SaveReservation implements Runnable {
 	private ReservationFrame reservationFrame;
 	private Manager manager;
 	
-	public SaveReservation(ReservationFrame reservationFrame, Manager manager) {
+	public SaveReservation(ReservationFrame reservationFrame,
+			Manager manager) {
 		this.reservationFrame = reservationFrame;
 		this.manager = manager;
 	}
@@ -28,12 +28,7 @@ public class SaveReservation implements Runnable {
 		try {
 			
 			//formated to eur currency without symbol
-			DecimalFormat paymentFormat = reservationFrame.getPaymentFormat();
-			String pattern = paymentFormat.toPattern();
-			String newPattern = pattern.replace("\u00A4", "").trim();
-			//delete trailing space
-			newPattern = newPattern.substring(0, newPattern.length()-1);
-			paymentFormat = new DecimalFormat(newPattern);
+			NumberFormat paymentFormat = reservationFrame.getPaymentFormat();
 			
 			String nameStr = Util.prepareString(reservationFrame.getGuestNameTxtFld().getText());
 			String checkInDateStr = Util.prepareString(reservationFrame.getCheckInDatePicker().getDateStringOrEmptyString());
@@ -46,7 +41,8 @@ public class SaveReservation implements Runnable {
 			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(
 					Util.prepareToParseMoney(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString()).toString());
 			//String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
-			String apartmentNameStr = Util.prepareString(reservationFrame.getApartmentComboBox().getSelectedItem().toString());
+			String apartmentName = reservationFrame.getApartmentComboBox().getSelectedItem().toString();
+			String apartmentNameStr = Util.prepareString(apartmentName);
 			String numberOfAdultsStr = Util.prepareString(reservationFrame.getNumberOfAdultsTxtFld().getText());
 			String numberOfChildrenStr = Util.prepareString(reservationFrame.getNumberOfChildrenTxtFld().getText());
 			String numberOfPersonsStr = Util.prepareString(reservationFrame.getNumberOfPersonsTxtFld().getText());
@@ -79,15 +75,26 @@ public class SaveReservation implements Runnable {
 			System.out.println("The SQL query is: " + strUpdateTourists); // Echo For debugging
 			System.out.println();
 			
-			stmt.executeUpdate(strUpdateTourists);
-			System.out.println("The SQL query is SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
-			ResultSet touristsIdRset = stmt.executeQuery("SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
-			touristsIdRset.next();
-			String touristsIdStr = touristsIdRset.getString("touristsId");
+			stmt.executeUpdate(strUpdateTourists, Statement.RETURN_GENERATED_KEYS);
 			
+			/* get tourists id (auto incremented) */
+			ResultSet touristsIdRset = stmt.getGeneratedKeys();
+			String touristsIdStr = "";
+			if(touristsIdRset.next()) {
+				touristsIdStr = Integer.toString(touristsIdRset.getInt(1));
+			}
+			//System.out.println("The SQL query is SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
+			//ResultSet touristsIdRset = stmt.executeQuery("SELECT touristsId FROM tourists WHERE name LIKE " + nameStr + ";");
+			//touristsIdRset.next();
+			//String touristsIdStr = touristsIdRset.getString("touristsId");
+			
+			/*
 			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE " + apartmentNameStr + ";");
 			apartmentIdRset.next();
 			String apartmentIdStr = apartmentIdRset.getString("apartmentId");
+			*/
+			
+			String apartmentIdStr = Integer.toString(manager.getApartmentByName(apartmentName).getId());
 			String strUpdateReservation = "INSERT INTO reservation (checkInDate, checkOutDate, pricePerNight, totalPrice, confirmed, advancedPayment, apartmentId, touristsId) VALUES (" + 
 					checkInDateStr + "," + checkOutDateStr + "," + pricePerNightStr + "," + totalPriceStr 
 					+ ",'reservation'," + advancedPaymentStr + "," + apartmentIdStr + "," + touristsIdStr + ");";

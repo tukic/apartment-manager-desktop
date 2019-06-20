@@ -74,11 +74,11 @@ public class InitData implements Runnable {
 				System.out.println("checkInDate = " + checkInDate);
 				LocalDate checkOutDate = rset.getDate("checkOutDate").toLocalDate();
 				System.out.println("checkOutDate = " + checkOutDate);
-				int pricePerNight = rset.getInt("pricePerNight");
+				double pricePerNight = rset.getDouble("pricePerNight");
 				System.out.println("pricePerNight = " + pricePerNight);
-				int totalPrice = rset.getInt("totalPrice");
+				double totalPrice = rset.getDouble("totalPrice");
 				System.out.println("totalPrice = " + totalPrice);
-				int advancedPayment = rset.getInt("advancedPayment");
+				double advancedPayment = rset.getDouble("advancedPayment");
 				System.out.println("advancedPayment =" + advancedPayment);
 				int touristsId = rset.getInt("touristsId");
 				System.out.println("touristsId = " + touristsId);

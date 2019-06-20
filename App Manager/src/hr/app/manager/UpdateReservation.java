@@ -1,12 +1,9 @@
 package hr.app.manager;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.Currency;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -19,12 +16,16 @@ public class UpdateReservation implements Runnable {
 	private Manager manager;
 	private int reservationId;
 	private int touristsId;
+	private int apartmentId;
 	
-	public UpdateReservation(ReservationFrame reservationFrame, Manager manager, int reservationId, int touristsId) {
+	public UpdateReservation(ReservationFrame reservationFrame,
+			Manager manager, int reservationId, int touristsId,
+			int apartmentId) {
 		this.reservationFrame = reservationFrame;
 		this.manager = manager;
 		this.reservationId = reservationId;
 		this.touristsId = touristsId;
+		this.apartmentId = apartmentId;
 	}
 	
 	@Override
@@ -33,12 +34,7 @@ public class UpdateReservation implements Runnable {
 		try {
 			
 			//formated to eur currency without symbol
-			DecimalFormat paymentFormat = reservationFrame.getPaymentFormat();
-			String pattern = paymentFormat.toPattern();
-			String newPattern = pattern.replace("\u00A4", "").trim();
-			//delete trailing space
-			newPattern = newPattern.substring(0, newPattern.length()-1);
-			paymentFormat = new DecimalFormat(newPattern);
+			NumberFormat paymentFormat = reservationFrame.getPaymentFormat();
 			
 			String nameStr = Util.prepareString(reservationFrame.getGuestNameTxtFld().getText());
 			String checkInDateStr = Util.prepareString(reservationFrame.getCheckInDatePicker().getDateStringOrEmptyString());
@@ -89,9 +85,15 @@ public class UpdateReservation implements Runnable {
 			//touristsIdRset.next();
 			//String touristsIdStr = touristsIdRset.getString("touristsId");
 			
+			
+			/*
 			ResultSet apartmentIdRset = stmt.executeQuery("SELECT apartmentId FROM apartment WHERE apartmentName LIKE " + apartmentNameStr + ";");
 			apartmentIdRset.next();
 			String apartmentIdStr = apartmentIdRset.getString("apartmentId");
+			*/
+			
+			String apartmentIdStr = Integer.toString(this.apartmentId);
+			
 			String strUpdateReservation = "UPDATE reservation "
 					+ "SET checkInDate = " + checkInDateStr + ", checkOutDate = " + checkOutDateStr 
 					+ ", pricePerNight = " + pricePerNightStr + ", totalPrice = " + totalPriceStr 
