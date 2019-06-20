@@ -6,8 +6,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -64,6 +66,12 @@ public class RefreshContentPanel {
 			System.out.println(apartment.getName());
 
 			JPanel apartmentPanel = new JPanel(new BorderLayout());
+			
+			/* set apartment panel border */
+			apartmentPanel.setBorder
+			(BorderFactory.createMatteBorder(2, 5, 2, 5, Color.BLACK));
+			
+			
 			JLabel apartmenNameLbl = new JLabel(apartment.getName(), JLabel.CENTER);
 			apartmenNameLbl.setFont(new Font("Courier New", Font.BOLD, 35));
 			apartmentPanel.add(apartmenNameLbl, BorderLayout.PAGE_START);
@@ -71,7 +79,7 @@ public class RefreshContentPanel {
 			JPanel calendarPanel = new JPanel(new GridLayout(0, 2));
 			//JPanel calendarPanel = new JPanel(new GridLayout(0, 3));
 
-			GregorianCalendar calendar = new GregorianCalendar();
+			Calendar calendar = GregorianCalendar.getInstance();
 
 			for (int i = 1; i <= YearMonth.of(manager.getYear(), month).lengthOfMonth(); i++) {
 
@@ -84,24 +92,59 @@ public class RefreshContentPanel {
 				}
 
 				Tourists tourists;
-				Color color; //bottun color
+				Color bottunColor = Color.WHITE; //bottun color
 				boolean enabled = true; //bottun enabled
 				if (reservation.getTourists() != null) {
 					tourists = reservation.getTourists();
-					color = Color.RED;	//reserved color					
+					bottunColor = Color.RED;	//reserved color					
 				} else {
 					tourists = new Tourists(-1, "prazno");
-					color = Color.GREEN; //free color
+					bottunColor = Color.GREEN; //free color
 					enabled = false; //disable button
 				}
-				JLabel numberLbl= new JLabel(Integer.toString(i) + "   ", JLabel.RIGHT);
-				//numberLbl.setBackground(color);
+				
+				/* find day string */
+				// TODO: za sve dane napraviti switch case i dodati boje
+				//calendar.set(manager.getYear(), manager.getMonth(), i);
+				String day = "sub";
+				Color dayColor = Color.BLACK;
+				switch (date.getDayOfWeek()) {
+				case SUNDAY:
+					day = "ned";
+					dayColor = Color.RED;
+					break;
+				case MONDAY:
+					day = "pon";
+					break;
+				case TUESDAY:
+					day = "uto";
+					break;
+				case WEDNESDAY:
+					day = "sri";
+					break;
+				case THURSDAY:
+					day = "èet";
+					break;
+				case FRIDAY:
+					day = "pet";
+					break;
+				case SATURDAY:
+					day = "sub";
+					dayColor = Color.BLUE;
+					break;
+				default:
+					break;
+				}
+				
+				JLabel numberLbl= new JLabel(Integer.toString(i) + " " + day + " ", JLabel.RIGHT);
+				numberLbl.setFont(new Font("Monospaced", Font.BOLD, 12));
+				numberLbl.setForeground(dayColor);
 				//numberLbl.setSize(7, 5);
 				//numberLbl.setOpaque(true);
 				calendarPanel.add(numberLbl);
 				JButton touristsNameBtn = new JButton(tourists.getName());
 				touristsNameBtn.setEnabled(enabled);
-				touristsNameBtn.setBackground(color);
+				touristsNameBtn.setBackground(bottunColor);
 				if (enabled == true) {
 					int reservationId = reservation.getId();
 					LocalDate checkInDate = reservation.getCheckInDate();
