@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Currency;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -143,16 +144,9 @@ public class ReservationFrame {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		//SpringLayout springLayout = new SpringLayout();
 		//frame.getContentPane().setLayout(springLayout);
-		
-		//formated to eur currency without symbol
-		paymentFormat = (DecimalFormat) NumberFormat.getCurrencyInstance();
-		paymentFormat.setCurrency(Currency.getInstance("EUR"));
-		String pattern = paymentFormat.toPattern();
-		String newPattern = pattern.replace("\u00A4", "").trim();
-		//delete trailing space
-		newPattern = newPattern.substring(0, newPattern.length()-1);
-		System.out.println(newPattern);
-		paymentFormat = new DecimalFormat(newPattern);
+				
+		paymentFormat = (DecimalFormat) NumberFormat.getNumberInstance();
+		paymentFormat.applyPattern("###,##0.00");
 		
 		container = new JPanel(new BorderLayout());
 		JPanel contentPanel = new JPanel(new GridLayout(0, 4, 10, 5));
@@ -320,7 +314,10 @@ public class ReservationFrame {
 			saveBtn = new JButton("Spremi izmjene");
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
-				Thread saveReservationThr = new Thread(new UpdateReservation(this, manager, reservationId, touristsId));
+				Thread saveReservationThr = new Thread(new UpdateReservation
+						(this, manager, reservationId, touristsId, 
+						manager.getApartmentByName
+						(apartmentComboBox.getSelectedItem().toString()).getId()));
 				saveReservationThr.start();
 			});
 			bottomButtonsPanel.add(saveBtn);

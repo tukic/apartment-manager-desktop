@@ -50,17 +50,17 @@ public class SaveApartment implements Runnable {
 			System.out.println("The SQL query is: " + saveApartmentStr); // Echo For debugging
 			System.out.println();
 			
-			stmt.executeUpdate(saveApartmentStr);
+			stmt.executeUpdate(saveApartmentStr, Statement.RETURN_GENERATED_KEYS);
 			
-			String selectApartmentIdStr = "SELECT apartmentId FROM apartment"
-					+ " WHERE apartmentName LIKE " + name + ";";
-			System.out.println(selectApartmentIdStr);
-			ResultSet apartmentIdRset = stmt.executeQuery(selectApartmentIdStr);
+			/* get apartment id (auto incremented) */
+
+			ResultSet apartmentIdRset = stmt.getGeneratedKeys();
+			String apartmentIdStr = "";
+			if(apartmentIdRset.next()) {
+				apartmentIdStr = Integer.toString(apartmentIdRset.getInt(1));
+			}
 			
-			apartmentIdRset.next();
-			
-			String apartmentIdStr = apartmentIdRset.getString("apartmentId");
-			
+						
 			for(FromToPrice ftp : apartmentFrame.getFromToList()) {
 				String from = Util.prepareString(ftp.from.getDateStringOrEmptyString());
 				String to = Util.prepareString(ftp.to.getDateStringOrEmptyString());
