@@ -157,6 +157,9 @@ public class Apartment {
 	}
 
 
+	public boolean isDateReserved(LocalDate date) {
+		return reservedDatesMap.containsKey(date);
+	}
 
 	public void setName(String name) {
 		this.name = name;
