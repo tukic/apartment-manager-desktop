@@ -3,12 +3,12 @@ package hr.app.manager;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
-import java.awt.font.OpenType;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.Currency;
-import java.util.Locale;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,8 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import com.github.lgooddatepicker.components.DatePicker;
-
-import hr.app.model.Apartment;
 
 
 
@@ -306,19 +304,43 @@ public class ReservationFrame {
 			saveBtn = new JButton("Spremi");
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
-				Thread saveReservationThr = new Thread(new SaveReservation(this, manager));
-				saveReservationThr.start();
+				if(checkInDatePicker.getDate().isAfter(checkOutDatePicker.getDate())) {
+					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+					saveBtn.setEnabled(true);	
+				}
+				else {
+					boolean overbooking = false;
+					for(LocalDate date : checkInDatePicker.getDate().datesUntil(checkOutDatePicker.getDate()).collect(Collectors.toList())) {
+						if(manager.getApartmentByName(apartmentComboBox.getSelectedItem().toString()).isDateReserved(date)) {
+							overbooking = true;
+							JOptionPane.showMessageDialog(frame, "Veæ postoji rezervacija u zadanom periodu!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+							saveBtn.setEnabled(true);
+							break;
+						}
+					}
+					
+					if(!overbooking) {
+						Thread saveReservationThr = new Thread(new SaveReservation(this, manager));
+						saveReservationThr.start();
+					}
+				}
 			});
 			bottomButtonsPanel.add(saveBtn);
 		} else {
 			saveBtn = new JButton("Spremi izmjene");
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
-				Thread saveReservationThr = new Thread(new UpdateReservation
+				if(checkInDatePicker.getDate().isAfter(checkOutDatePicker.getDate())) {
+					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+					saveBtn.setEnabled(true);	
+				}
+				else {
+					Thread saveReservationThr = new Thread(new UpdateReservation
 						(this, manager, reservationId, touristsId, 
 						manager.getApartmentByName
 						(apartmentComboBox.getSelectedItem().toString()).getId()));
-				saveReservationThr.start();
+					saveReservationThr.start();
+				}
 			});
 			bottomButtonsPanel.add(saveBtn);
 			deleteBtn = new JButton("Obriši rezervaciju");
