@@ -80,6 +80,8 @@ public class InitData implements Runnable {
 				System.out.println("totalPrice = " + totalPrice);
 				double advancedPayment = rset.getDouble("advancedPayment");
 				System.out.println("advancedPayment =" + advancedPayment);
+				String advPayCurrency = rset.getString("advPayCurrency");
+				System.out.println("advPayCurrency = " + advPayCurrency);
 				int touristsId = rset.getInt("touristsId");
 				System.out.println("touristsId = " + touristsId);
 				String touristsName = rset.getString("name");
@@ -141,7 +143,7 @@ public class InitData implements Runnable {
 						numberOfChildren, numberOfPersons, email, phoneNumber, pets, touristsNote);
 						
 				Reservation reservation = new Reservation(reservationId, checkInDate,
-						checkOutDate, pricePerNight, totalPrice, advancedPayment, status, tourists);
+						checkOutDate, pricePerNight, totalPrice, advancedPayment, advPayCurrency, status, tourists);
 				
 				//if(touristsName != null) {
 					//reservation.setTourists(new Tourists(touristsId, touristsName));

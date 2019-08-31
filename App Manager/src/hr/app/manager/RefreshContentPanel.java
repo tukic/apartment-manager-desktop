@@ -85,7 +85,7 @@ public class RefreshContentPanel {
 
 				LocalDate date = LocalDate.of(manager.getYear(), month, i);
 				String status = "slobodno";
-				Reservation reservation = new Reservation(-1, date, date, 0, 0, 0, ReservationStatus.CANCELLED, null);
+				Reservation reservation = new Reservation(-1, date, date, 0, 0, 0, null, ReservationStatus.CANCELLED, null);
 				if (apartment.getReservedDatesMap().get(date) != null) {
 					reservation = apartment.getReservedDatesMap().get(date);
 					status = apartment.getReservedDatesMap().get(date).getStatus().toString();
@@ -162,11 +162,12 @@ public class RefreshContentPanel {
 					boolean pets = reservation.getTourists().isPets();
 					boolean advancePaid = reservation.getStatus().equals(ReservationStatus.ADVANCE_PAID);
 					double advancedPayment = reservation.getAdvancedPayment();
+					String advPayCurrency = reservation.getAdvPayCurrency();
 					String touristsNote = reservation.getTourists().getTouristsNote();
 					touristsNameBtn.addActionListener(l -> {
 						new ReservationFrame(manager, reservationId, tourists.getName(), checkInDate, checkOutDate, pricePerNight,
 								totalPrice, touristsId, numberOfPersons, numberOfAdults, numberOfChildren, city, country, email,
-								phoneNumber, pets, advancePaid, advancedPayment, touristsNote, apartment.getName());
+								phoneNumber, pets, advancePaid, advancedPayment, advPayCurrency, touristsNote, apartment.getName());
 					});
 				}
 				calendarPanel.add(touristsNameBtn);

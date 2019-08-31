@@ -16,9 +16,11 @@ public class Reservation {
 	private double totalPrice;
 	private ReservationStatus status;
 	private double advancedPayment;
+	private String advPayCurrency;
 
 	public Reservation(int id, LocalDate checkInDate, LocalDate checkOutDate,
 			double pricePerNight, double totalPrice, double advancedPayment,
+			String advPayCurrency,
 			ReservationStatus status, Tourists tourists) {
 		this.id = id;
 		this.checkInDate = checkInDate;
@@ -26,6 +28,7 @@ public class Reservation {
 		this.pricePerNight = pricePerNight;
 		this.totalPrice = totalPrice;//* Math.toIntExact(ChronoUnit.DAYS.between(checkOutDate, checkInDate));
 		this.advancedPayment = advancedPayment;
+		this.advPayCurrency = advPayCurrency;
 		this.status = status;
 		this.tourists = tourists;
 	}
@@ -72,6 +75,10 @@ public class Reservation {
 
 	public void setAdvancedPayment(int advancedPayment) {
 		this.advancedPayment = advancedPayment;
+	}
+	
+	public String getAdvPayCurrency() {
+		return advPayCurrency;
 	}
 
 	public List<LocalDate> getReservedDates() {

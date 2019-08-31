@@ -26,4 +26,9 @@ public class Util {
 	public static String standardErrorTitle() {
 		return "Greška";
 	}
+	
+	public static String[] advPayCurrencyStringArray() {
+		String[] currencies =  {"EUR", "HRK"};
+		return currencies;
+	}
 }

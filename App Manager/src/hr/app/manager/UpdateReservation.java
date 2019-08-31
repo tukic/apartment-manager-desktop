@@ -46,6 +46,7 @@ public class UpdateReservation implements Runnable {
 			//String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
 			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(
 					Util.prepareToParseMoney(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString()).toString());
+			String advPayCurrencyStr = Util.prepareString(reservationFrame.getAdvPayCurrencyComboBox().getSelectedItem().toString());
 			//String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
 			String apartmentNameStr = Util.prepareString(reservationFrame.getApartmentComboBox().getSelectedItem().toString());
 			String numberOfAdultsStr = Util.prepareString(reservationFrame.getNumberOfAdultsTxtFld().getText());
@@ -97,7 +98,8 @@ public class UpdateReservation implements Runnable {
 			String strUpdateReservation = "UPDATE reservation "
 					+ "SET checkInDate = " + checkInDateStr + ", checkOutDate = " + checkOutDateStr 
 					+ ", pricePerNight = " + pricePerNightStr + ", totalPrice = " + totalPriceStr 
-					+ ", confirmed = 'reservation', advancedPayment = " + advancedPaymentStr 
+					+ ", confirmed = 'reservation', advPayCurrency = " + advPayCurrencyStr 
+							+ ", advancedPayment = " + advancedPaymentStr 
 					+ ", apartmentId = " + apartmentIdStr + ", touristsId = " + touristsIdStr 
 					+ " WHERE reservationId = " + reservationId;
 			System.out.println("The SQL query is: " + strUpdateReservation );

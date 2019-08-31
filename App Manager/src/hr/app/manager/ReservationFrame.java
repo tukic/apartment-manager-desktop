@@ -3,11 +3,12 @@ package hr.app.manager;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -23,11 +24,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import com.github.lgooddatepicker.components.DatePicker;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
-
-
+import hr.app.util.Util;
 
 
 public class ReservationFrame {
@@ -44,6 +54,7 @@ public class ReservationFrame {
 	private DatePicker checkInDatePicker;
 	private DatePicker checkOutDatePicker;
 	private JButton saveBtn;
+	private JButton makeCalculationBtn;
 	private JFormattedTextField totalPriceTxtFld;
 	private JTextField numberOfChildrenTxtFld;
 	private JTextField numberOfAdultsTxtFld;
@@ -53,6 +64,7 @@ public class ReservationFrame {
 	private JTextField emailTxtFld;
 	private JTextField phoneNumberTxtFld;
 	private JComboBox<String> apartmentComboBox;
+	private JComboBox<String> advPayCurrencyComboBox;
 	private JCheckBox animalsCheckBox;
 	private JCheckBox advancedPaymentCheckBox;
 	private JTextArea notesTxtArea;
@@ -95,7 +107,7 @@ public class ReservationFrame {
 	public ReservationFrame(Manager manager, int reservationId, String name, LocalDate checkInDate, LocalDate checkOutDate, 
 			double pricePerNight, double totalPrice, int touristsId, String numberOfPersons, String numberOfAdults,
 			String numberOfChildren, String city, String country, String email, String phoneNumber,
-			boolean animals, boolean advancePaid, double advancedPayment, String notes, String apartmentName) {
+			boolean animals, boolean advancePaid, double advancedPayment, String advPayCurrency, String notes, String apartmentName) {
 		this.manager = manager;
 		this.reservationId = reservationId;
 		this.touristsId = touristsId;
@@ -115,6 +127,7 @@ public class ReservationFrame {
 		phoneNumberTxtFld.setText(phoneNumber);
 		animalsCheckBox.setSelected(animals);
 		advancedPaymentCheckBox.setSelected(Double.compare(advancedPayment, 0.f) != 0);
+		advPayCurrencyComboBox.setSelectedItem(advPayCurrency);
 		if(advancedPaymentCheckBox.isSelected()) {
 			advancedPaymentTxtFld.setEditable(true);
 		} else {
@@ -198,7 +211,14 @@ public class ReservationFrame {
 		advancedPaymentCheckBox = new JCheckBox("Upla\u0107ena akontacija");
 		advancedPaymentCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
 		contentPanel.add(advancedPaymentCheckBox);
-		contentPanel.add(new JLabel());
+		
+		JPanel advPayCurrencyPnl = new JPanel();
+		
+		advPayCurrencyPnl.add(new JLabel("Valuta akontacije"));
+		advPayCurrencyComboBox = new JComboBox<>(Util.advPayCurrencyStringArray());
+		
+		advPayCurrencyPnl.add(advPayCurrencyComboBox);
+		contentPanel.add(advPayCurrencyPnl);
 		
 		JLabel lblGrad = new JLabel("Grad");
 		contentPanel.add(lblGrad);
@@ -327,6 +347,42 @@ public class ReservationFrame {
 			});
 			bottomButtonsPanel.add(saveBtn);
 		} else {
+			makeCalculationBtn = new JButton("Napravi kalkulaciju");
+			makeCalculationBtn.addActionListener(l -> {
+				try {
+					Document document = new Document();
+					PdfWriter.getInstance(document, new FileOutputStream("iTextHelloWorld.pdf"));
+					document.open();
+					Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
+					int numOfDays = checkInDatePicker.getDate().until(checkOutDatePicker.getDate()).getDays();
+					Paragraph chunk;
+					try {
+						double totalPrice = paymentFormat.parse(pricePerNightTxtFld.getText()).doubleValue()*numOfDays;
+						chunk = new Paragraph(pricePerNightTxtFld.getText() + "×"
+								+ numOfDays + "=" + totalPrice, font);
+						document.add(chunk);
+						document.add(Chunk.NEWLINE);
+						chunk = new Paragraph("\n-" + advancedPaymentTxtFld.getText());
+						document.add(chunk);
+						document.add(Chunk.NEWLINE);
+						double calculation = totalPrice-paymentFormat.parse(advancedPaymentTxtFld.getText()).doubleValue();
+						chunk = new Paragraph("\n" + calculation);
+						document.add(chunk);
+						document.add(Chunk.NEWLINE);
+						document.close();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					 
+
+				} catch (IOException | DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			bottomButtonsPanel.add(makeCalculationBtn);
+			
 			saveBtn = new JButton("Spremi izmjene");
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
@@ -359,7 +415,29 @@ public class ReservationFrame {
 			bottomButtonsPanel.add(deleteBtn);
 		}
 		
-
+		checkInDatePicker.addDateChangeListener(l -> calculateTotalPrice());
+		checkOutDatePicker.addDateChangeListener(l -> calculateTotalPrice());
+		
+		pricePerNightTxtFld.getDocument().addDocumentListener(
+				new DocumentListener() {
+					
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						calculateTotalPrice();
+					}
+					
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						calculateTotalPrice();
+					}
+					
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						calculateTotalPrice();	
+					}
+							
+		});
+		
 		bottomPanel.add(bottomButtonsPanel, BorderLayout.PAGE_END);
 		
 		container.add(contentPanel, BorderLayout.CENTER);
@@ -563,6 +641,21 @@ public class ReservationFrame {
 		});*/
 		
 	}
+
+	//TODO: greska kod kod datuma neka 
+	private void calculateTotalPrice() {
+		if(checkInDatePicker.isTextFieldValid() && checkOutDatePicker.isTextFieldValid()) {
+			try {
+				int numberOfNights = checkInDatePicker.getDate().until(checkOutDatePicker.getDate()).getDays();
+				double pricePerNight;
+				pricePerNight = paymentFormat.parse(pricePerNightTxtFld.getText()).doubleValue();
+				totalPriceTxtFld.setText(paymentFormat.format((double) pricePerNight * numberOfNights));
+			} catch (Exception e) {
+				totalPriceTxtFld.setText("0,00");
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public JPanel getContainer() {
 		return container;
@@ -634,6 +727,10 @@ public class ReservationFrame {
 
 	public JCheckBox getAdvancedPaymentCheckBox() {
 		return advancedPaymentCheckBox;
+	}
+	
+	public JComboBox<String> getAdvPayCurrencyComboBox() {
+		return advPayCurrencyComboBox;
 	}
 	
 	public JTextArea getNotesTxtArea() {
