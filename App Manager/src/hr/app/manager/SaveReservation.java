@@ -40,6 +40,7 @@ public class SaveReservation implements Runnable {
 			//String totalPriceStr = Util.prepareString(paymentFormat.parse(reservationFrame.getTotalPriceTxtFld().getText()).toString());
 			String advancedPaymentStr = Util.prepareString(paymentFormat.parse(
 					Util.prepareToParseMoney(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString()).toString());
+			String advPayCurrencyStr = Util.prepareString(reservationFrame.getAdvPayCurrencyComboBox().getSelectedItem().toString());
 			//String advancedPaymentStr = Util.prepareString(paymentFormat.parse(reservationFrame.getAdvancedPaymentTxtFld().getText()).toString());
 			String apartmentName = reservationFrame.getApartmentComboBox().getSelectedItem().toString();
 			String apartmentNameStr = Util.prepareString(apartmentName);
@@ -95,9 +96,9 @@ public class SaveReservation implements Runnable {
 			*/
 			
 			String apartmentIdStr = Integer.toString(manager.getApartmentByName(apartmentName).getId());
-			String strUpdateReservation = "INSERT INTO reservation (checkInDate, checkOutDate, pricePerNight, totalPrice, confirmed, advancedPayment, apartmentId, touristsId) VALUES (" + 
+			String strUpdateReservation = "INSERT INTO reservation (checkInDate, checkOutDate, pricePerNight, totalPrice, confirmed, advancedPayment, advPayCurrency, apartmentId, touristsId) VALUES (" + 
 					checkInDateStr + "," + checkOutDateStr + "," + pricePerNightStr + "," + totalPriceStr 
-					+ ",'reservation'," + advancedPaymentStr + "," + apartmentIdStr + "," + touristsIdStr + ");";
+					+ ",'reservation'," + advancedPaymentStr + "," + advPayCurrencyStr + "," + apartmentIdStr + "," + touristsIdStr + ");";
 			System.out.println("The SQL query is: " + strUpdateReservation );
 			
 			stmt.executeUpdate(strUpdateReservation);
