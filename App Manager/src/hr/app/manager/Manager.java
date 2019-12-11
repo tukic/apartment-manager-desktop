@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 import hr.app.model.Apartment;
 
 /**
- * @author Tomislav Ukiæ
+ * @author Tomislav UkiÄ‡
  * 
  * The Manager program implements an application that
  * manages booking of an apartment
@@ -41,7 +41,8 @@ public class Manager {
 	private JButton newReservationBtn; // button for adding new reservation
 	private JButton newApartmentBtn; //button for adding new apartment
 	private JButton updateApartmentBtn; //button for eding existing apartment
-
+	private JButton exportDataBtn; //button for exporting data to local file
+	
 	/**
 	 * Launch the application.
 	 */
@@ -99,8 +100,11 @@ public class Manager {
 		
 		updateApartmentBtn = new JButton("Uredi apartmane");
 		updateApartmentBtn.addActionListener(l -> new ApartmentFrame(this, true));
-		// top panel buttons added to panel in refreshContentPanel
 
+		exportDataBtn = new JButton("Izvezi");
+		exportDataBtn.addActionListener(l -> new ExportData(this));
+		// top panel buttons added to panel in refreshContentPanel
+				
 		// adding central panel to frame
 		centralPanel = new JPanel();
 		frame.getContentPane().add(centralPanel, BorderLayout.CENTER);
@@ -235,6 +239,17 @@ public class Manager {
 	public JButton getUpdateApartmentBtn() {
 		return updateApartmentBtn;
 	}
+	
+	
+	/**
+	 * Gets button for exporting data
+	 * @return export data button
+	 */
+	public JButton getExportDataBtn() {
+		return exportDataBtn;
+	}
+	
+	
 	
 	/**
 	 * Gets top panel which contains buttons in the top of the frame
