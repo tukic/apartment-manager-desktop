@@ -19,25 +19,28 @@ import hr.app.model.Apartment;
  * 
  * The Manager program implements an application that
  * manages booking of an apartment
+ * 
  *
  */
-
 public class Manager {
 	
+	// default year and month for default homepage
 	private final int year = 2019;
 	private final int month = 7;
+	// viewable months
 	private final String[] monthComboBoxArray = {"Lipanj", "Srpanj", "Kolovoz", "Rujan"};
 
+	// stores all apartments 
 	private List<Apartment> apartmentList = new LinkedList<>();
-	Thread initDataThr;
-	private JFrame frame;
-	private JComboBox<String> monthCmbBox;
-	private JPanel contentPanel;
-	private JPanel centralPanel;
-	private JPanel topPanel;
-	private JButton newReservationBtn;
-	private JButton newApartmentBtn;
-	private JButton updateApartmentBtn;
+	Thread initDataThr;	// gets all data from db to manager
+	private JFrame frame; // main frame
+	private JComboBox<String> monthCmbBox;	// combobox for choosing month
+	private JPanel centralPanel; // parent panel to content panel in middle of frame
+	private JPanel contentPanel; // displays all apartments
+	private JPanel topPanel; // displays buttons on top of page
+	private JButton newReservationBtn; // button for adding new reservation
+	private JButton newApartmentBtn; //button for adding new apartment
+	private JButton updateApartmentBtn; //button for eding existing apartment
 
 	/**
 	 * Launch the application.
@@ -47,7 +50,7 @@ public class Manager {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Manager window = new Manager();
+					Manager window = new Manager(); 
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,7 +58,8 @@ public class Manager {
 			}
 		});
 		
-		Thread backupDataStartThr = new Thread(new BackupData());
+		// starting thread for backuping data at end of program
+		Thread backupDataStartThr = new Thread(new BackupData()); 
 		backupDataStartThr.start();
 	
 	}
@@ -65,8 +69,7 @@ public class Manager {
 	 */
 	public Manager() {
 		
-		String url = "jdbc:mysql://85.10.205.173:3306/app_ukic";
-		
+		// starting thread for getting and initializing data from DB
 		initDataThr = new Thread(new InitData(this));
 		initDataThr.start();
 		initialize();
@@ -76,97 +79,47 @@ public class Manager {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		// setting main frame parameters
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1006, 634);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 
+		// setting top panel which stores all top buttons
 		topPanel = new JPanel();
 		frame.getContentPane().add(topPanel, BorderLayout.NORTH);
 		topPanel.setLayout(new GridLayout(1, 2, 0, 0));
-		
-		
-		/*
-		 * buttons at top added to panel in refreshContentPanel
-		 */
+
+		// initialising and setting top panel buttons parameters
 		newReservationBtn = new JButton("Nova rezervacija");
-		newReservationBtn.addActionListener(new ReservationClicked(this));
-		//topPanel.add(newReservationBtn);		
+		newReservationBtn.addActionListener(new ReservationClicked(this));		
 		
 		newApartmentBtn = new JButton("Novi apartman");
 		newApartmentBtn.addActionListener(l -> new ApartmentFrame(this, false));
 		
 		updateApartmentBtn = new JButton("Uredi apartmane");
 		updateApartmentBtn.addActionListener(l -> new ApartmentFrame(this, true));
+		// top panel buttons added to panel in refreshContentPanel
 
+		// adding central panel to frame
 		centralPanel = new JPanel();
 		frame.getContentPane().add(centralPanel, BorderLayout.CENTER);
 		
+		// setting rest of panels
 		centralPanel.setLayout(new BorderLayout());
 		contentPanel = new JPanel();
 		monthCmbBox = new JComboBox<>(monthComboBoxArray);
 		monthCmbBox.addActionListener(new MonthCmbBoxChanged(this));
 		
-
-		System.out.println();
-		
-		/*
-		for(Apartment apartment : apartmentList) {
-						
-			JPanel apartmentPanel = new JPanel(new BorderLayout());
-			apartmentPanel.add(new JLabel(apartment.getName()), BorderLayout.PAGE_START);
-					
-			JPanel calendarPanel = new JPanel(new GridLayout(0, 3));
-			
-			for(int i = 1; i <= YearMonth.of(year, month).lengthOfMonth(); i++) {
-				
-				LocalDate date = LocalDate.of(year, month, i);
-				String status = "slobodno";
-				Reservation reservation = new Reservation(-1, date, date, 0, ReservationStatus.CANCELLED);
-				//TODO date.equals pogreška
-				
-				if(apartment.getReservedDatesMap().get(date) != null) {
-					reservation = apartment.getReservedDatesMap().get(date);
-					status = apartment.getReservedDatesMap().get(date).getStatus().toString();
-				}
-				
-				Tourists tourists;
-				if(reservation.getTourists() != null) {
-					tourists = reservation.getTourists();
-				}
-				else {
-					tourists = new Tourists(-1, "prazno");
-				}
-				
-				calendarPanel.add(new JLabel(Integer.toString(i)));
-				JButton touristsNameBtn = new JButton(tourists.getName());
-				touristsNameBtn.addActionListener(l -> {
-					
-				});
-				calendarPanel.add(touristsNameBtn);
-				calendarPanel.add(new JLabel(status));		
-			}
-			
-			apartmentPanel.add(calendarPanel, BorderLayout.CENTER);
-			contentPanel.add(apartmentPanel);
-			
-		}
-		*/
-		
-		
+		// adding content panel with scroll pane to central panel
 		centralPanel.add(new JScrollPane(contentPanel), BorderLayout.CENTER);
 		frame.add(centralPanel);
+		
+		// show loading screen while data is fething
 		new LoadingScreen(this).show();
 		
 		
-		/*try {
-			initDataThr.join();				//waiting initDataThr to finish so data could be taken in time
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
-
-		//new RefreshContentPanel(this).refresh();
-		
+		// if closing main window start thread for backupdata
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -177,63 +130,128 @@ public class Manager {
 				
 	}
 
+	/**
+	 * Adds apartment to manager's apartment list
+	 * @param apartment is being add to apartment list
+	 */
 	public void addToApartmentList(Apartment apartment) {
 		apartmentList.add(apartment);
 	}
 	
+	/**
+	 * Gets list of partments
+	 * @return apartment list
+	 */
 	public List<Apartment> getApartmentList() {
 		return apartmentList;
 	}
 	
+	/**
+	 * Gets central panel
+	 * @return central panel
+	 */
 	public JPanel getCentralPanel() {
 		return centralPanel;
 	}
 	
+	/**
+	 * Sets central panel
+	 * @param centralPanel
+	 */
 	public void setCentralPanel(JPanel centralPanel) {
 		this.centralPanel = centralPanel;
 	}
 	
+	/**
+	 * Gets month combo box
+	 * @return
+	 */
 	public JComboBox<String> getMonthCmbBox() {
 		return monthCmbBox;
 	}
 
+	
+	/**
+	 * Gets defualt year
+	 * @return year
+	 */
 	public int getYear() {
 		return year;
 	}
 	
+	/**
+	 * Gets default month
+	 * @return month
+	 */
 	public int getMonth() {
 		return month;
 	}
 	
+	
+	/**
+	 * Gets main frame
+	 * @return frame
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}
 	
+	/**
+	 * Gets content panel
+	 * @return content panel
+	 */
 	public JPanel getContentPanel() {
 		return contentPanel;
 	}
 	
+	/**
+	 * Sets content panel
+	 * @param contentPanel
+	 */
 	public void setContentPanel(JPanel contentPanel) {
 		this.contentPanel = contentPanel;
 	}
 	
+	/**
+	 * Gets button for adding new reservation
+	 * @return new reservation button
+	 */
 	public JButton getNewReservationBtn() {
 		return newReservationBtn;
 	}
 	
+	/**
+	 * Gets button for adding new apartment
+	 * @return new apartment button
+	 */
 	public JButton getNewApartmentBtn() {
 		return newApartmentBtn;
 	}
 	
+	/**
+	 * Gets button for updating existing apartment
+	 * @return update apartment button
+	 */
 	public JButton getUpdateApartmentBtn() {
 		return updateApartmentBtn;
 	}
 	
+	/**
+	 * Gets top panel which contains buttons in the top of the frame
+	 * @return top panel 
+	 */
 	public JPanel getTopPanel() {
 		return topPanel;
 	}
 	
 	
+	/**
+	 * Method doesn't make sense searches it searches for the apartment
+	 * in the list and returns it if it is found otherwise returns null
+	 * @param apartment
+	 * @return apartment if apartment is in the apartment list 
+	 * 			otherwise returns null
+	 */
 	public Apartment getApartmentFromList(Apartment apartment) {
 		Apartment found = null;
 		for(Apartment a : apartmentList) {
@@ -245,6 +263,12 @@ public class Manager {
 		return found;
 	}
 	
+	/**
+	 * Searches for apartment in list by its id
+	 * @param id
+	 * @return apartment if list contains that id otherwise
+	 * 			returns new apartment with just id
+	 */
 	public Apartment getApartmentById(int id) {
 		Apartment found = null;
 		for(Apartment a : apartmentList) {
@@ -257,6 +281,13 @@ public class Manager {
 		return found;
 	}
 	
+	
+	/**
+	 * Makes String from apartments which is returned as 
+	 * String array
+	 * @return apartments string array every field
+	 * 		corresponds to one apartment
+	 */
 	public String[] apartmentsToStringArray() {
 		String[] apartmentsStringArray = new String[getApartmentList().size()];
 		for(int i = 0; i < apartmentsStringArray.length; i++) {
@@ -265,9 +296,11 @@ public class Manager {
 		return apartmentsStringArray;
 	}
 	
-	/*
-	 * finds apartment by name
-	 * if apartment not found return null
+	/**
+	 * Finds apartment by name
+	 * @param name
+	 * @return apartment if apartment is found
+	 * 		otherwise null
 	 */
 	public Apartment getApartmentByName(String name) {
 		for(Apartment apartment : apartmentList) {
@@ -278,6 +311,10 @@ public class Manager {
 		return null;
 	}
 	
+	
+	/**
+	 * Clears apartments list 
+	 */
 	public void removeAllData() {
 		apartmentList.clear();
 	}
