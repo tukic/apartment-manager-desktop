@@ -350,37 +350,20 @@ public class ReservationFrame {
 			makeCalculationBtn = new JButton("Napravi kalkulaciju");
 			makeCalculationBtn.addActionListener(l -> {
 				try {
-					Document document = new Document();
-					PdfWriter.getInstance(document, new FileOutputStream("iTextHelloWorld.pdf"));
-					document.open();
-					Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
+					double pricePerNight = paymentFormat.parse(pricePerNightTxtFld.getText()).doubleValue();
+					double totalPrice = paymentFormat.parse(totalPriceTxtFld.getText()).doubleValue();
+					double advancedPayment = paymentFormat.parse(advancedPaymentTxtFld.getText()).doubleValue();
+					String advancedPaymentCurrency = advPayCurrencyComboBox.getSelectedItem().toString();
 					int numOfDays = checkInDatePicker.getDate().until(checkOutDatePicker.getDate()).getDays();
-					Paragraph chunk;
-					try {
-						double totalPrice = paymentFormat.parse(pricePerNightTxtFld.getText()).doubleValue()*numOfDays;
-						chunk = new Paragraph(pricePerNightTxtFld.getText() + "×"
-								+ numOfDays + "=" + totalPrice, font);
-						document.add(chunk);
-						document.add(Chunk.NEWLINE);
-						chunk = new Paragraph("\n-" + advancedPaymentTxtFld.getText());
-						document.add(chunk);
-						document.add(Chunk.NEWLINE);
-						double calculation = totalPrice-paymentFormat.parse(advancedPaymentTxtFld.getText()).doubleValue();
-						chunk = new Paragraph("\n" + calculation);
-						document.add(chunk);
-						document.add(Chunk.NEWLINE);
-						document.close();
-					} catch (ParseException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					 
-
-				} catch (IOException | DocumentException e) {
-					// TODO Auto-generated catch block
+					new CalculationFrame(frame, numOfDays, totalPrice,
+							pricePerNight, advancedPayment, advancedPaymentCurrency);
+				} catch(ParseException e) {
 					e.printStackTrace();
 				}
 			});
+		
+
+
 			bottomButtonsPanel.add(makeCalculationBtn);
 			
 			saveBtn = new JButton("Spremi izmjene");
