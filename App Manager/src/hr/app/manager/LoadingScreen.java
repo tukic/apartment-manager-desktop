@@ -19,7 +19,7 @@ public class LoadingScreen {
 		JPanel contentPanel = manager.getContentPanel();
 		contentPanel.removeAll();
 
-		JLabel loadingReservationLbl = new JLabel("UËitavanje rezervacija...", JLabel.CENTER);
+		JLabel loadingReservationLbl = new JLabel("Uƒçitavanje rezervacija...", JLabel.CENTER);
 		loadingReservationLbl.setFont(new Font("Courier New", Font.BOLD, 35));
 		contentPanel.add(loadingReservationLbl, BorderLayout.PAGE_START);
 		manager.setContentPanel(contentPanel);
