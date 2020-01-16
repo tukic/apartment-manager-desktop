@@ -89,5 +89,15 @@ public class Reservation {
 	public String toString() {
 		return this.tourists.getName();
 	}
+	
+	public String print(){
+		return String.format("%s,%s,%s,%s,%s,%s"
+				, String.valueOf(id)
+				, tourists.toString()
+				, checkInDate.toString()
+				, checkOutDate.toString()
+				, String.valueOf(pricePerNight)
+				, String.valueOf(totalPrice));
+	}
 
 }

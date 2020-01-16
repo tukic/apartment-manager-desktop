@@ -2,6 +2,7 @@ package hr.app.manager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class RefreshContentPanel {
 
 	public void refresh() {
 		manager.getMonthCmbBox().setPopupVisible(false);
+		manager.getYearCmbBox().setPopupVisible(false);
 		JPanel contentPanel = manager.getContentPanel();
 		contentPanel.removeAll();
 		
@@ -36,9 +38,17 @@ public class RefreshContentPanel {
 		manager.getTopPanel().add(manager.getNewApartmentBtn());
 		manager.getTopPanel().add(manager.getUpdateApartmentBtn());
 		manager.getTopPanel().add(manager.getExportDataBtn());
-		manager.getCentralPanel().add(manager.getMonthCmbBox(), BorderLayout.PAGE_START);
+		
+		JPanel yearMonthPnl = new JPanel(new GridLayout(1, 2));
+		
+		yearMonthPnl.add(manager.getMonthCmbBox());
+		yearMonthPnl.add(manager.getYearCmbBox());
+		manager.getCentralPanel().add(yearMonthPnl, BorderLayout.PAGE_START);
+
 
 		String monthString = (String) manager.getMonthCmbBox().getSelectedItem();
+		String yearString = (String) manager.getYearCmbBox().getSelectedItem();
+				
 		int month = 7;
 		switch (monthString) {
 		case "Lipanj":
@@ -81,10 +91,12 @@ public class RefreshContentPanel {
 			//JPanel calendarPanel = new JPanel(new GridLayout(0, 3));
 
 			Calendar calendar = GregorianCalendar.getInstance();
+			
+			int year = Integer.parseInt((String) manager.getYearCmbBox().getSelectedItem());
+			
+			for (int i = 1; i <= YearMonth.of(year, month).lengthOfMonth(); i++) {
 
-			for (int i = 1; i <= YearMonth.of(manager.getYear(), month).lengthOfMonth(); i++) {
-
-				LocalDate date = LocalDate.of(manager.getYear(), month, i);
+				LocalDate date = LocalDate.of(year, month, i);
 				String status = "slobodno";
 				Reservation reservation = new Reservation(-1, date, date, 0, 0, 0, null, ReservationStatus.CANCELLED, null);
 				if (apartment.getReservedDatesMap().get(date) != null) {
@@ -124,7 +136,7 @@ public class RefreshContentPanel {
 					day = "sri";
 					break;
 				case THURSDAY:
-					day = "èet";
+					day = "Äet";
 					break;
 				case FRIDAY:
 					day = "pet";
@@ -181,9 +193,12 @@ public class RefreshContentPanel {
 		}
 
 		//manager.setContentPanel(contentPanel);
+		manager.getYearCmbBox().setSelectedItem(yearString);
+		manager.getMonthCmbBox().setSelectedItem(monthString);
+		yearMonthPnl.setVisible(true);
 		manager.getCentralPanel().setVisible(false);
 		manager.getCentralPanel().setVisible(true);
-
+		
 	}
 
 }
