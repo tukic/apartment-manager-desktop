@@ -118,6 +118,11 @@ public class Tourists {
 	public void setTouristsNote(String touristsNote) {
 		this.touristsNote = touristsNote;
 	}
+
+	@Override
+	public String toString() {
+		return "Tourists [name=" + name + "]";
+	}
 	
 	
 	

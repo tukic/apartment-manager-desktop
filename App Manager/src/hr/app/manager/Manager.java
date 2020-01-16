@@ -2,6 +2,7 @@ package hr.app.manager;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,16 +26,18 @@ import hr.app.model.Apartment;
 public class Manager {
 	
 	// default year and month for default homepage
-	private final int year = 2019;
+	private int year = Calendar.getInstance().get(Calendar.YEAR);
 	private final int month = 7;
 	// viewable months
 	private final String[] monthComboBoxArray = {"Lipanj", "Srpanj", "Kolovoz", "Rujan"};
-
+	private String[] yearComboBoxArray;
+			
 	// stores all apartments 
 	private List<Apartment> apartmentList = new LinkedList<>();
 	Thread initDataThr;	// gets all data from db to manager
 	private JFrame frame; // main frame
 	private JComboBox<String> monthCmbBox;	// combobox for choosing month
+	private JComboBox<String> yearCmbBox;
 	private JPanel centralPanel; // parent panel to content panel in middle of frame
 	private JPanel contentPanel; // displays all apartments
 	private JPanel topPanel; // displays buttons on top of page
@@ -47,6 +50,8 @@ public class Manager {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		new Printer();
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -115,6 +120,15 @@ public class Manager {
 		monthCmbBox = new JComboBox<>(monthComboBoxArray);
 		monthCmbBox.addActionListener(new MonthCmbBoxChanged(this));
 		
+		yearComboBoxArray = new String[8];
+		for(int i = -3; i < 5; i++) {
+			int tmp = year + i;
+			yearComboBoxArray[i+3] = Integer.toString(tmp);
+		}
+		yearCmbBox = new JComboBox<>(yearComboBoxArray);
+		yearCmbBox.setSelectedItem(Integer.toString(year));
+		yearCmbBox.addActionListener(new MonthCmbBoxChanged(this));
+		
 		// adding content panel with scroll pane to central panel
 		centralPanel.add(new JScrollPane(contentPanel), BorderLayout.CENTER);
 		frame.add(centralPanel);
@@ -174,7 +188,15 @@ public class Manager {
 		return monthCmbBox;
 	}
 
-	
+	/**
+	 * Gets year combo box
+	 * @return
+	 */
+	public JComboBox<String> getYearCmbBox() {
+		return yearCmbBox;
+	}
+
+
 	/**
 	 * Gets defualt year
 	 * @return year

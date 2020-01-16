@@ -323,7 +323,7 @@ public class ReservationFrame {
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
 				if(checkInDatePicker.getDate().isAfter(checkOutDatePicker.getDate())) {
-					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "Greï¿½ka", JOptionPane.ERROR_MESSAGE);
 					saveBtn.setEnabled(true);	
 				}
 				else {
@@ -331,7 +331,7 @@ public class ReservationFrame {
 					for(LocalDate date : checkInDatePicker.getDate().datesUntil(checkOutDatePicker.getDate()).collect(Collectors.toList())) {
 						if(manager.getApartmentByName(apartmentComboBox.getSelectedItem().toString()).isDateReserved(date)) {
 							overbooking = true;
-							JOptionPane.showMessageDialog(frame, "Veæ postoji rezervacija u zadanom periodu!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Veï¿½ postoji rezervacija u zadanom periodu!!!", "Greï¿½ka", JOptionPane.ERROR_MESSAGE);
 							saveBtn.setEnabled(true);
 							break;
 						}
@@ -368,7 +368,7 @@ public class ReservationFrame {
 			saveBtn.addActionListener(l -> {
 				saveBtn.setEnabled(false);
 				if(checkInDatePicker.getDate().isAfter(checkOutDatePicker.getDate())) {
-					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "Greška", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Datum odlaska mora biti nakon datuma dolaska!!!", "GreÅ¡ka", JOptionPane.ERROR_MESSAGE);
 					saveBtn.setEnabled(true);	
 				}
 				else {
@@ -380,10 +380,10 @@ public class ReservationFrame {
 				}
 			});
 			bottomButtonsPanel.add(saveBtn);
-			deleteBtn = new JButton("Obriši rezervaciju");
+			deleteBtn = new JButton("ObriÅ¡i rezervaciju");
 			deleteBtn.addActionListener(l -> {
 				deleteBtn.setEnabled(false);
-				int confirmedDeleting = JOptionPane.showConfirmDialog(frame, "Jeste li sigurni da želite obrisati rezervaciju?",
+				int confirmedDeleting = JOptionPane.showConfirmDialog(frame, "Jeste li sigurni da ï¿½elite obrisati rezervaciju?",
 						"Potvrda brisanja", JOptionPane.YES_NO_OPTION, JOptionPane.CANCEL_OPTION);
 				if(confirmedDeleting == 0) {
 					Thread deleteReservationThr = new Thread(new DeleteReservation(this, manager, reservationId, touristsId));

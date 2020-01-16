@@ -24,7 +24,7 @@ public class Util {
 	}
 	
 	public static String standardErrorTitle() {
-		return "Greöka";
+		return "Gre≈°ka";
 	}
 	
 	public static String[] advPayCurrencyStringArray() {

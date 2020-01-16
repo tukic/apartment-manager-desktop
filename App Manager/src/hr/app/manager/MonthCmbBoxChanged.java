@@ -30,7 +30,8 @@ public class MonthCmbBoxChanged implements ActionListener {
 		System.out.println(Thread.currentThread().getName());
 		
 		new RefreshContentPanel(manager).refresh();
-		
+		manager.getYearCmbBox().setVisible(true);
+		manager.getMonthCmbBox().setVisible(true);
 
 	}
 
